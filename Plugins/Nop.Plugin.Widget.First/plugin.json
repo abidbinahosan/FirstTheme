@@ -1,0 +1,11 @@
+{
+  "Group": "Widget",
+  "FriendlyName": "First Widget",
+  "SystemName": "Widget.First",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widget.First.dll",
+  "Description": "This is a sample plugin to display a Hello World widget on the site."
+}

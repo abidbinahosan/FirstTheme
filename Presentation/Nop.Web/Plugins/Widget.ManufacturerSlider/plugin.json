@@ -1,0 +1,16 @@
+﻿{
+  "Group": "Widget",
+  "FriendlyName": "Manufacturer Slider",
+  "SupportedVersions": [
+    "4.80"
+  ],
+  "Author": "BS23",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Widget.ManufacturerSlider.dll",
+  "Description": "This is a plugin to display a widget that show images on the site.",
+  "LimitedToStores": [],
+  "LimitedToCustomerRoles": [],
+  "DependsOnSystemNames": [],
+  "SystemName": "Widget.ManufacturerSlider",
+  "Version": "4.80.1"
+}
