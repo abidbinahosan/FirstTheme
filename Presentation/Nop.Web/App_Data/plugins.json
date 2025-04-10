@@ -106,11 +106,16 @@
     {
       "SystemName": "Widget.ManufacturerSlider",
       "Version": "4.80.1"
+    },
+    {
+      "SystemName": "Misc.Supplier",
+      "Version": "4.80.1"
     }
   ],
   "PluginNamesToUninstall": [],
   "PluginNamesToDelete": [
-    "Widget.HelloWorld"
+    "Widget.HelloWorld",
+    "Misc.Suppliers"
   ],
   "PluginNamesToInstall": []
 }
