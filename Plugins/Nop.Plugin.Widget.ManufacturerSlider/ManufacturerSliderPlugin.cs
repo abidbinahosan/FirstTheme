@@ -35,7 +35,7 @@ namespace Nop.Plugin.Widget.ManufacturerSlider
         /// </returns>
         public Task<IList<string>> GetWidgetZonesAsync()
         {
-            return Task.FromResult<IList<string>>(new List<string> { "home_page_before_categories" });
+            return Task.FromResult<IList<string>>(new List<string> { "home_page_before_products" });
         }
         public override async Task InstallAsync()
         {

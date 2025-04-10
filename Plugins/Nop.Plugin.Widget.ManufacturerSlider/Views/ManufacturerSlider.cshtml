@@ -2,7 +2,56 @@
 
 @if (Model.Count > 0)
 {
-	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+	<style>
+		.manufacturer-gallery {
+			max-width: 1200px;
+			margin: auto;
+			padding: 20px;
+		}
+
+		.manufacturer-gallery h2 {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		.manufacturer-gallery img {
+			width: 100%;
+			height: auto;
+			object-fit: contain;
+		}
+
+		.swiper-button-next,
+		.swiper-button-prev {
+			width: 30px;
+			height: 30px;
+			background-color: #333;
+			color: #fff;
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 8px;
+		}
+
+		.swiper {
+			width: 100%;
+			height: auto;
+		}
+
+		.swiper-slide {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #fff;
+		}
+
+		.swiper-button-next:hover,
+		.swiper-button-prev:hover {
+			background-color: #555;
+		}
+	</style>
+
 	<div class="manufacturer-gallery">
 		<h2>Manufacturers</h2>
 
@@ -15,28 +64,38 @@
 					</div>
 				}
 			</div>
+
+			<!-- Navigation buttons -->
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+
+			<!-- Pagination -->
+			<div class="swiper-pagination"></div>
 		</div>
 	</div>
 
 	<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 	<script>
-		var swiper = new Swiper(".featured-manufacturer-swiper", {
-			slidesPerView: 4,
-			spaceBetween: 20,
-			navigation: {
-				nextEl: ".swiper-button-next",
-				prevEl: ".swiper-button-prev",
-			},
-			pagination: {
-				el: ".swiper-pagination",
-				clickable: true,
-			},
-			loop: true,
-			breakpoints: {
-				1024: { slidesPerView: 4 },
-				768: { slidesPerView: 3 },
-				480: { slidesPerView: 2 },
-			}
+		document.addEventListener("DOMContentLoaded", function () {
+			var swiper = new Swiper(".featured-manufacturer-swiper", {
+				slidesPerView: 3,
+				spaceBetween: 20,
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+				pagination: {
+					el: ".swiper-pagination",
+					clickable: true,
+				},
+				loop: true,
+				breakpoints: {
+					1024: { slidesPerView: 3 },
+					768: { slidesPerView: 2 },
+					480: { slidesPerView: 2 },
+					0: { slidesPerView: 1 }
+				}
+			});
 		});
 	</script>
 }

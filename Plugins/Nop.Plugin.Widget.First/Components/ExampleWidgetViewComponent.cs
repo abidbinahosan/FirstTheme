@@ -11,6 +11,6 @@ public class ExampleWidgetViewComponent : NopViewComponent
 {
     public IViewComponentResult Invoke(string widgetZone, object additionalData)
     {
-        return Content("Hello This is My First Widget Plugin!");
+        return Content("");
     }
 }
