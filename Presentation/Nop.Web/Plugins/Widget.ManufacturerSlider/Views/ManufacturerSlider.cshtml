@@ -22,21 +22,20 @@
 				transition: transform 0.3s ease; /* Smooth transition for hover effect */
 			}
 
-				.manufacturer-gallery img:hover {
-					transform: scale(1.05); /* Enlarge image slightly on hover */
-				}
+			.manufacturer-gallery img:hover {
+				transform: scale(1.05); /* Enlarge image slightly on hover */
+			}
 
 		.swiper-button-next,
 		.swiper-button-prev {
-			width: 30px;
-			height: 30px;
-			background-color: #333;
-			color: #fff;
-			border-radius: 50%;
+			color: black;
+			border-radius: 5%;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			font-size: 8px;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
 		}
 
 		.swiper {
@@ -53,7 +52,8 @@
 
 		.swiper-button-next:hover,
 		.swiper-button-prev:hover {
-			background-color: #555;
+			transform: scale(1.1); /* zoom effect */
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		}
 	</style>
 

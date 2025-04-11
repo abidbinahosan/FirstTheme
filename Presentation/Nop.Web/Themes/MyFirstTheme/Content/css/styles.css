@@ -146,6 +146,7 @@ input[type="radio"] + * {
 input[type="button"], input[type="submit"],
 button, .button-1, .button-2 {
   cursor: pointer;
+  border-radius: 4px;
 }
 
 label, label + * {
@@ -1268,11 +1269,12 @@ label, label + * {
   text-align: center;
   color: #fff;
   text-transform: uppercase;
+  border-radius: 4px;
 }
 
   .newsletter-subscribe-button:hover,
   .newsletter-subscribe-button:focus {
-    background-color: #4B0082;
+    background-color: #4b0082;
   }
 
 .newsletter-email .options {
@@ -1597,18 +1599,18 @@ label, label + * {
   margin: 0 0 30px;
 }
 
-.contact-vendor .button-2 {
-  border: none;
-  background-color: #4ab2f1;
-  padding: 10px 15px;
-  font-size: 14px;
-  color: #fff;
-  text-transform: uppercase;
-}
+  .contact-vendor .button-2 {
+    border: none;
+    background-color: #8A2BE2;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #fff;
+    text-transform: uppercase;
+  }
 
 .contact-vendor .button-2:hover,
 .contact-vendor .button-2:focus {
-  background-color: #248ece;
+  background-color: #4B0082;
 }
 
 .product-selectors {
@@ -1747,7 +1749,7 @@ label, label + * {
   padding: 5px;
 }
   .item-box:hover {
-    transform: translateY(-15px);
+    transform: translateY(-8px);
   }
 
   .item-box .picture {
@@ -2050,11 +2052,11 @@ label, label + * {
   cursor: pointer;
 }
 
-.pager li span {
-  border-color: transparent;
-  background-color: #4ab2f1;
-  color: #fff;
-}
+  .pager li span {
+    border-color: transparent;
+    background-color: #8A2BE2;
+    color: #fff;
+  }
 
 .pager li.previous-page *,
 .pager li.next-page *,
@@ -3546,7 +3548,7 @@ label, label + * {
 .apply-vendor-page .button-1 {
   min-width: 140px;
   border: none;
-  background-color: #4ab2f1;
+  background-color: #8A2BE2;
   padding: 10px 30px;
   text-align: center;
   font-size: 15px;
@@ -3554,14 +3556,14 @@ label, label + * {
   text-transform: uppercase;
 }
 
-.contact-page .button-1:hover,
-.contact-page .button-1:focus,
-.email-a-friend-page .button-1:hover,
-.email-a-friend-page .button-1:focus,
-.apply-vendor-page .button-1:hover,
-.apply-vendor-page .button-1:focus {
-  background-color: #248ece;
-}
+  .contact-page .button-1:hover,
+  .contact-page .button-1:focus,
+  .email-a-friend-page .button-1:hover,
+  .email-a-friend-page .button-1:focus,
+  .apply-vendor-page .button-1:hover,
+  .apply-vendor-page .button-1:focus {
+    background-color: #4B0082;
+  }
 
 .contact-page .topic-block,
 .email-a-friend-page .title,
@@ -3672,32 +3674,33 @@ label, label + * {
 .return-request-page .button-1 {
   min-width: 140px;
   border: none;
-  background-color: #4ab2f1;
+  background-color: #8A2BE2;
   padding: 10px 30px;
   text-align: center;
   font-size: 15px;
   color: #fff;
   text-transform: uppercase;
+  border-radius: 4px;
 }
 
-.registration-page .button-1:hover,
-.registration-page .button-1:focus,
-.registration-result-page .button-1:hover,
-.registration-result-page .button-1:focus,
-.login-page .button-1:hover,
-.login-page .button-1:focus,
-.password-recovery-page .button-1:hover,
-.password-recovery-page .button-1:focus,
-.email-revalidation-page .button-1:hover,
-.email-revalidation-page .button-1:focus,
-.account-activation-page .button-1:hover,
-.account-activation-page .button-1:focus,
-.account-page .button-1:hover,
-.account-page .button-1:focus,
-.return-request-page .button-1:hover,
-.return-request-page .button-1:focus {
-  background-color: #248ece;
-}
+  .registration-page .button-1:hover,
+  .registration-page .button-1:focus,
+  .registration-result-page .button-1:hover,
+  .registration-result-page .button-1:focus,
+  .login-page .button-1:hover,
+  .login-page .button-1:focus,
+  .password-recovery-page .button-1:hover,
+  .password-recovery-page .button-1:focus,
+  .email-revalidation-page .button-1:hover,
+  .email-revalidation-page .button-1:focus,
+  .account-activation-page .button-1:hover,
+  .account-activation-page .button-1:focus,
+  .account-page .button-1:hover,
+  .account-page .button-1:focus,
+  .return-request-page .button-1:hover,
+  .return-request-page .button-1:focus {
+    background-color: #4B0082;
+  }
 
 .return-request-page h1 a {
   color: #4ab2f1;
@@ -5431,7 +5434,7 @@ label, label + * {
 .search-input .button-1 {
   min-width: 140px;
   border: none;
-  background-color: #4ab2f1;
+  background-color: #8A2BE2;
   padding: 10px 30px;
   text-align: center;
   font-size: 15px;
@@ -5439,10 +5442,10 @@ label, label + * {
   text-transform: uppercase;
 }
 
-.search-input .button-1:hover,
-.search-input .button-1:focus {
-  background-color: #248ece;
-}
+  .search-input .button-1:hover,
+  .search-input .button-1:focus {
+    background-color: #4B0082;
+  }
 
 .search-results {
   margin: 30px 0 0;
@@ -5661,7 +5664,6 @@ label, label + * {
     color: #fff;
     text-transform: uppercase;
     border-radius: 4px;
-    justify-content: flex-start; /* Align buttons horizontally, adjust as needed */
   }
 
     .blog-posts .buttons .read-more:hover,
@@ -8265,6 +8267,7 @@ label, label + * {
     float: left;
     width: 220px;
     margin: 0;
+
   }
 
   .footer-block:first-child {
@@ -8287,6 +8290,7 @@ label, label + * {
 
   .newsletter-email {
     display: block;
+    border-radius: 4px;
   }
 
   .newsletter-email input[type="text"] {
@@ -8298,7 +8302,9 @@ label, label + * {
       padding: 0 5px;
       background-color: #8A2BE2;
     }
-
+      .newsletter-email .newsletter-subscribe-button:hover {
+        background-color: #6f1ab8; /* Darker purple on hover */
+      }
   .newsletter-validation .field-validation-valid {
     text-align: left;
   }

@@ -112,7 +112,9 @@
       "Version": "4.80.1"
     }
   ],
-  "PluginNamesToUninstall": [],
+  "PluginNamesToUninstall": [
+    "Misc.Supplier"
+  ],
   "PluginNamesToDelete": [
     "Widget.HelloWorld",
     "Misc.Suppliers"
