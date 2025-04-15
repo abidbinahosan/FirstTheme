@@ -9,6 +9,7 @@ namespace Nop.Plugin.Misc.Supplier;
 public class SupplierPlugin : BasePlugin
 {
     private readonly IPermissionService _permissionService;
+
     public SupplierPlugin(IPermissionService permissionService)
     {
         _permissionService = permissionService;
@@ -35,6 +36,7 @@ public class SupplierPlugin : BasePlugin
     public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
     {
         private readonly IPermissionService _permissionService;
+
         public EventConsumer(IPermissionService permissionService)
         {
             _permissionService = permissionService;
@@ -53,9 +55,11 @@ public class SupplierPlugin : BasePlugin
                     SystemName = "Misc.Supplier", // Unique name for your plugin
                     Title = "Supplier", // Title for the menu item
                     Url = eventMessage.GetMenuItemUrl("Supplier", "Index"), // URL for the menu item
+                    //Url = "/Admin/Supplier/Index", // Explicit URL for the menu item pointing to the SupplierController's Index action
                     IconClass = "far fa-dot-circle", // Icon for the menu item
                     Visible = true, // Make the menu item visible
                 });
         }
     }
+
 }
