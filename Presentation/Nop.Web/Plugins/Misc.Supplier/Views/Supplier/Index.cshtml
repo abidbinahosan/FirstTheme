@@ -1,48 +1,52 @@
-﻿@model IList<Nop.Plugin.Misc.Supplier.Domain.SupplierEntity>
+﻿@using Nop.Plugin.Misc.Supplier.Model
+@using Nop.Web.Framework.Models.DataTables
+@using Nop.Web.Framework.Infrastructure
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.AspNetCore.Mvc.Rendering
+@inject Nop.Services.Localization.ILocalizationService localizationService
+
+@model SupplierSearchModel
+
 @{
-	Layout = "_AdminLayout";
-	ViewBag.Title = "Supplier List";
+	Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+	ViewData["ActiveMenuSystemName"] = "Supplier";
+	ViewBag.PageTitle = await localizationService.GetResourceAsync("Admin.Suppliers");
 }
 
-<div class="content-header clearfix px-4">
-	<h1 class="float-left">Suppliers</h1>
+<div class="content-header clearfix">
+	<h1 class="float-left">@await localizationService.GetResourceAsync("Admin.Suppliers")</h1>
 	<div class="float-right">
-		<a class="btn btn-primary" asp-action="Create">
-			Add New Supplier
+		<a asp-action="Create" class="btn btn-primary">
+			<i class="fas fa-plus-square"></i> @await localizationService.GetResourceAsync("Admin.Common.AddNew")
 		</a>
 	</div>
 </div>
 
-<div class="px-4">
-	<!-- Suppliers Table -->
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Contact Person</th>
-				<th>Phone</th>
-				<th>Email</th>
-				<th>Address</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var supplier in Model)
-			{
-				<tr>
-					<td>@supplier.Name</td>
-					<td>@supplier.ContactPerson</td>
-					<td>@supplier.Phone</td>
-					<td>@supplier.Email</td>
-					<td>@supplier.Address</td>
-					<td>
-						<a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@supplier.Id">Edit</a>
-						<form asp-action="Delete" asp-route-id="@supplier.Id" method="post" style="display:inline;">
-							<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-						</form>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-</div>
+<section class="content">
+	<div class="container-fluid">
+		<div class="form-horizontal">
+			<div class="cards-group">
+				<div class="card card-default">
+					<div class="card-body">
+						@await Html.PartialAsync("Table", new DataTablesModel
+ {
+	 Name = "suppliers-grid",
+	 UrlRead = new DataUrl("List", "Supplier", null),
+	 SearchButtonId = "search-suppliers",
+	 Length = Model.PageSize,
+	 LengthMenu = Model.AvailablePageSizes,
+	 ColumnCollection = new List<ColumnProperty>
+						{
+						new ColumnProperty(nameof(SupplierModel.Name)) { Title = "Name" },
+						new ColumnProperty(nameof(SupplierModel.ContactPerson)) { Title = "Contact Person" },
+						new ColumnProperty(nameof(SupplierModel.Phone)) { Title = "Phone" },
+						new ColumnProperty(nameof(SupplierModel.Email)) { Title = "Email" },
+						new ColumnProperty(nameof(SupplierModel.Address)) { Title = "Address" }
+						}
+ })
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

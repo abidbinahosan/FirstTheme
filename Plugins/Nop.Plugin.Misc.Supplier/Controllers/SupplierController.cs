@@ -1,35 +1,60 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Plugin.Misc.Supplier.Domain;
+using Nop.Plugin.Misc.Supplier.Model;
 using Nop.Plugin.Misc.Supplier.Services;
 using Nop.Services.Security;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Threading.Tasks;
+using Nop.Services.Common;
+using Nop.Core;
+using Nop.Plugin.Misc.Supplier.Factories;
+using Nop.Plugin.Misc.Supplier.Model;
 
 namespace Nop.Plugin.Misc.Supplier.Controllers
 {
     [AuthorizeAdmin]
     [Area("admin")]
+
     public class SupplierController : BasePluginController
     {
         private readonly ISupplierService _supplierService;
         private readonly IPermissionService _permissionService;
+        private readonly ISupplierModelFactory _supplierModelFactory;
 
-        public SupplierController(ISupplierService supplierService, IPermissionService permissionService)
+        public SupplierController(
+            ISupplierService supplierService,
+            IPermissionService permissionService,
+            ISupplierModelFactory supplierModelFactory)
         {
             _supplierService = supplierService;
             _permissionService = permissionService;
+            _supplierModelFactory = supplierModelFactory;
         }
+
+
 
         public async Task<IActionResult> Index()
         {
-            var suppliers = await _supplierService.GetAllAsync();
-            return View("~/Plugins/Misc.Supplier/Views/Supplier/Index.cshtml", suppliers);
+            var model = new SupplierSearchModel();
+
+            model.SetGridPageSize();
+
+            return View("~/Plugins/Nop.Plugin.Misc.Supplier/Views/Supplier/Create.cshtml", model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> List(SupplierSearchModel searchModel)
+        {
+            var model = await _supplierModelFactory.PrepareSupplierListModelAsync(searchModel);
+            return Json(model);
+        }
+
 
         public IActionResult Create()
         {
-            return View("~/Plugins/Misc.Supplier/Views/Supplier/Create.cshtml");
+            return View("~/Plugins/Nop.Plugin.Misc.Supplier/Views/Supplier/Create.cshtml");
         }
 
         [HttpPost]
@@ -40,13 +65,13 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                 await _supplierService.InsertAsync(supplier);
                 return RedirectToAction("Index");
             }
-            return View("~/Plugins/Misc.Supplier/Views/Supplier/Create.cshtml", supplier);
+            return View("~/Plugins/Nop.Plugin.Misc.Supplier/Views/Supplier/Create.cshtml", supplier);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             var supplier = await _supplierService.GetByIdAsync(id);
-            return View("~/Plugins/Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
+            return View("~/Plugins/Nop.Plugin.Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
         }
 
         [HttpPost]
@@ -57,7 +82,7 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                 await _supplierService.UpdateAsync(supplier);
                 return RedirectToAction("Index");
             }
-            return View("~/Plugins/Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
+            return View("~/Plugins/Nop.Plugin.Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
         }
 
         [HttpPost]
