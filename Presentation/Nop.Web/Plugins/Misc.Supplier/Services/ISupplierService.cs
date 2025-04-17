@@ -13,7 +13,5 @@ namespace Nop.Plugin.Misc.Supplier.Services
         Task DeleteAsync(SupplierEntity supplier);
         Task<SupplierEntity> GetByIdAsync(int id);
         Task<IPagedList<SupplierEntity>> GetAllAsync(string searchName, string searchEmail, int pageIndex, int pageSize);
-        IList<SupplierModel> GetSuppliers(int pageIndex, int pageSize); // 👈 Add this line
-        IList<SupplierModel> GetSuppliers(int pageIndex, int pageSize, out int totalCount);
     }
 }

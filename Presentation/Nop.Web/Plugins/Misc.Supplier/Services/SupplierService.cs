@@ -38,15 +38,5 @@ namespace Nop.Plugin.Misc.Supplier.Services
             // Return the paginated list using the ToPagedList method
             return await query.ToPagedListAsync(pageIndex, pageSize);
         }
-
-        IList<SupplierModel> ISupplierService.GetSuppliers(int pageIndex, int pageSize)
-        {
-            throw new NotImplementedException();
-        }
-
-        IList<SupplierModel> ISupplierService.GetSuppliers(int pageIndex, int pageSize, out int totalCount)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

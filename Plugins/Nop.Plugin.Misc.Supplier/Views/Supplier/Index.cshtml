@@ -1,25 +1,21 @@
 ﻿@using Nop.Plugin.Misc.Supplier.Model
-@using Nop.Web.Framework.Models.DataTables
-@using Nop.Web.Framework.Infrastructure
-@using Microsoft.AspNetCore.Mvc.ViewFeatures
-@using Microsoft.AspNetCore.Mvc.Rendering
-@using Microsoft.AspNetCore.Routing
-
-@inject Nop.Services.Localization.ILocalizationService localizationService
 
 @model SupplierSearchModel
 
 @{
 	Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
-	ViewData["ActiveMenuSystemName"] = "Supplier";
-	ViewBag.PageTitle = await localizationService.GetResourceAsync("Admin.Suppliers");
+	NopHtml.SetActiveMenuItemSystemName("Supplier");
+	ViewBag.PageTitle = T("Admin.Suppliers").Text;
+
+	const string hideSearchBlockAttributeName = "SuppliersPage.HideSearchBlock";
+	var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentCustomerAsync(), hideSearchBlockAttributeName);
 }
 
 <div class="content-header clearfix">
-	<h1 class="float-left">@await localizationService.GetResourceAsync("Suppliers")</h1>
+	<h1 class="float-left">Suppliers</h1>
 	<div class="float-right">
 		<a asp-action="Create" class="btn btn-primary">
-			<i class="fas fa-plus-square"></i> @await localizationService.GetResourceAsync("Admin.Common.AddNew")
+			<i class="fas fa-plus-square"></i> @T("Admin.Common.AddNew")
 		</a>
 	</div>
 </div>
@@ -28,57 +24,59 @@
 	<div class="container-fluid">
 		<div class="form-horizontal">
 			<div class="cards-group">
+				<!-- Search Panel -->
 				<div class="card card-default card-search">
 					<div class="card-body">
-						<!-- Search Row: Click to toggle -->
-						<div class="row search-row opened" data-hideattribute="VendorsPage.HideSearchBlock">
-							<div class="search-text">Search</div>
+						<div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+							<div class="search-text">@T("Admin.Common.Search")</div>
 							<div class="icon-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i></div>
-							<div class="icon-collapse"><i class="far fa-angle-up" aria-hidden="true"></i></div>
+							<div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
 						</div>
 
-						<!-- Collapsible Search Body -->
-						<div class="search-body closed" style="display: block;">
+						<div class="search-body @(hideSearchBlock ? "closed" : "")">
 							<div class="row">
-								<!-- Vendor Name Search Field -->
 								<div class="col-md-6">
 									<div class="form-group row">
 										<div class="col-md-4">
 											<div class="label-wrapper">
-												<label class="col-form-label" for="SearchName">Suppler name</label>
-												<div title="" data-toggle="tooltip" class="ico-help" data-original-title="A supplier name.">
+												<label class="col-form-label" for="SearchName">Supplier Name</label>
+												<!-- Tooltip for SearchName -->
+												<div title="Search by a supplier name." data-toggle="tooltip" class="ico-help" data-original-title="A supplier name.">
 													<i class="fas fa-circle-question"></i>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-8">
-											<input class="form-control text-box single-line" id="SearchName" name="SearchName" type="text" value="@Model.SearchName">
+											<input class="form-control text-box single-line" id="SearchName" name="SearchName" type="text" value="">
 										</div>
 									</div>
 								</div>
-								<!-- Vendor Email Search Field -->
+
 								<div class="col-md-6">
 									<div class="form-group row">
 										<div class="col-md-4">
 											<div class="label-wrapper">
-												<label class="col-form-label" for="SearchEmail">Suppler Email</label>
-												<div title="" data-toggle="tooltip" class="ico-help" data-original-title="Search by a suppler Email.">
+												<label class="col-form-label" for="SearchEmail">Supplier Email</label>
+												<!-- Tooltip for SearchEmail -->
+												<div title="Search by a supplier email." data-toggle="tooltip" class="ico-help" data-original-title="Search by a supplier email.">
 													<i class="fas fa-circle-question"></i>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-8">
-											<input class="form-control text-box single-line" id="SearchEmail" name="SearchEmail" type="text" value="@Model.SearchEmail">
+											<input class="form-control text-box single-line" id="SearchEmail" name="SearchEmail" type="text" value="">
 										</div>
 									</div>
 								</div>
 							</div>
-							<!-- Search Button -->
+						</div>
+
+
+
 							<div class="row">
 								<div class="text-center col-12">
-									<button type="button" id="search-vendors" class="btn btn-primary btn-search">
-										<i class="fas fa-magnifying-glass"></i>
-										Search
+									<button type="button" id="search-suppliers" class="btn btn-primary btn-search">
+										<i class="fas fa-magnifying-glass"></i> @T("Admin.Common.Search")
 									</button>
 								</div>
 							</div>
@@ -86,65 +84,40 @@
 					</div>
 				</div>
 
-				<!-- Data Table -->
-				@await Html.PartialAsync("Table", new DataTablesModel
-{
-	Name = "suppliers-grid",
-	UrlRead = new DataUrl("List", "Supplier", null),
-	SearchButtonId = "search-vendors",
-	Length = Model.PageSize,
-	LengthMenu = Model.AvailablePageSizes,
-	ColumnCollection = new List<ColumnProperty>
-				{
-				new ColumnProperty(nameof(SupplierModel.Name))
-				{
-				Title = await localizationService.GetResourceAsync("Admin.Vendors.Fields.Name")
-				},
-				new ColumnProperty(nameof(SupplierModel.Email))
-				{
-				Title = await localizationService.GetResourceAsync("Admin.Vendors.Fields.Email")
-				},
-				new ColumnProperty(nameof(SupplierModel.Active))
-				{
-				Title = await localizationService.GetResourceAsync("Admin.Common.Active"),
-				Render = new RenderBoolean(),
-				ClassName = NopColumnClassDefaults.CenterAll
-				},
-				new ColumnProperty(nameof(SupplierModel.Id))
-				{
-				Title = await localizationService.GetResourceAsync("Admin.Common.Edit"),
-				Render = new RenderButtonEdit(new DataUrl("Edit", "Supplier", new RouteValueDictionary { { "id", "{0}" } })),
-				ClassName = NopColumnClassDefaults.Button
-				}
-				}
-})
+				<!-- Grid Panel -->
+				<div class="card card-default">
+					<div class="card-body">
+						@await Html.PartialAsync("Table", new DataTablesModel
+ {
+	 Name = "suppliers-grid",
+	 UrlRead = new DataUrl("List", "Supplier", null),
+	 SearchButtonId = "search-suppliers",
+	 Length = Model.PageSize,
+	 LengthMenu = Model.AvailablePageSizes,
+	 Filters = new List<FilterParameter>
+						{
+						new FilterParameter(nameof(Model.SearchName)),
+						new FilterParameter(nameof(Model.SearchEmail))
+						},
+	 ColumnCollection = new List<ColumnProperty>
+						{
+						new ColumnProperty(nameof(SupplierModel.Name)) { Title = "Name" },
+						new ColumnProperty(nameof(SupplierModel.ContactPerson)) { Title = "Contact Person" },
+						new ColumnProperty(nameof(SupplierModel.Phone)) { Title = "Phone" },
+						new ColumnProperty(nameof(SupplierModel.Email)) { Title = "Email" },
+						new ColumnProperty(nameof(SupplierModel.Address)) { Title = "Address" },
+						new ColumnProperty(nameof(SupplierModel.Id))
+						{
+						Title = T("Admin.Common.Edit").Text,
+						Width = "50",
+						ClassName =  NopColumnClassDefaults.Button,
+						Render = new RenderButtonEdit(new DataUrl("~/Admin/Supplier/Edit"))
+						}
+						}
+ })
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </section>
-
-@* Include JavaScript for collapsible functionality *@
-<script>
-	$(document).ready(function () {
-		// Toggle search section visibility
-		$(".search-row").click(function () {
-			var searchBody = $(this).next(".search-body");
-			var iconCollapse = $(this).find(".icon-collapse");
-
-			searchBody.toggleClass("closed");
-			searchBody.toggleClass("opened");
-
-			if (searchBody.hasClass("opened")) {
-				iconCollapse.find("i").removeClass("fa-angle-up").addClass("fa-angle-down");
-			} else {
-				iconCollapse.find("i").removeClass("fa-angle-down").addClass("fa-angle-up");
-			}
-		});
-
-		// Automatically open search section if there are existing search values
-		if ($('#SearchName').val() || $('#SearchEmail').val()) {
-			$(".search-body").removeClass("closed").addClass("opened");
-			$(".icon-collapse i").removeClass("fa-angle-up").addClass("fa-angle-down");
-		}
-	});
-</script>

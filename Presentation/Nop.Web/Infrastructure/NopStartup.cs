@@ -3,6 +3,7 @@ using Nop.Services.Security;
 using Nop.Web.Areas.Admin.Factories;
 using Nop.Web.Areas.Admin.Helpers;
 using Nop.Web.Framework.Factories;
+using Nop.Web.Areas.Admin;
 using Nop.Web.Infrastructure.Installation;
 
 namespace Nop.Web.Infrastructure;

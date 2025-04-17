@@ -7,12 +7,15 @@ using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using System.Threading.Tasks;
+using Nop.Services.Common;
+using Nop.Core;
 using Nop.Plugin.Misc.Supplier.Factories;
 
 namespace Nop.Plugin.Misc.Supplier.Controllers
 {
     [AuthorizeAdmin]
     [Area("admin")]
+
     public class SupplierController : BasePluginController
     {
         private readonly ISupplierService _supplierService;
@@ -29,15 +32,17 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
             _supplierModelFactory = supplierModelFactory;
         }
 
-        // GET: Supplier Index Page
+
+
         public async Task<IActionResult> Index()
         {
             var model = new SupplierSearchModel();
+
             model.SetGridPageSize();
+
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Index.cshtml", model);
         }
 
-        // POST: List API for DataTables
         [HttpPost]
         public async Task<IActionResult> List(SupplierSearchModel searchModel)
         {
@@ -45,13 +50,17 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
             return Json(model);
         }
 
-        // GET: Create View
+
+
+
+
+
+
         public IActionResult Create()
         {
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Create.cshtml");
         }
 
-        // POST: Create Action
         [HttpPost]
         public async Task<IActionResult> Create(SupplierEntity supplier)
         {
@@ -60,18 +69,15 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                 await _supplierService.InsertAsync(supplier);
                 return RedirectToAction("Index");
             }
-
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Create.cshtml", supplier);
         }
 
-        // GET: Edit View
         public async Task<IActionResult> Edit(int id)
         {
             var supplier = await _supplierService.GetByIdAsync(id);
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
         }
 
-        // POST: Edit Action
         [HttpPost]
         public async Task<IActionResult> Edit(SupplierEntity supplier)
         {
@@ -80,11 +86,9 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                 await _supplierService.UpdateAsync(supplier);
                 return RedirectToAction("Index");
             }
-
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Edit.cshtml", supplier);
         }
 
-        // POST: Delete Supplier
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
