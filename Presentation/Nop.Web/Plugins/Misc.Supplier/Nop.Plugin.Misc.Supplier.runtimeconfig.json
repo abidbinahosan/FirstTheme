@@ -12,8 +12,6 @@
       }
     ],
     "configProperties": {
-      "System.GC.Concurrent": false,
-      "System.GC.Server": false,
       "System.Reflection.NullabilityInfoContext.IsSupported": true,
       "System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization": false
     }
