@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Nop.Plugin.Misc.Supplier.Factories;
 using Nop.Plugin.Misc.Supplier.Model;
+using Nop.Plugin.Misc.Supplier.Domain;
 using Nop.Plugin.Misc.Supplier.Services;
 using Nop.Web.Framework.Models.Extensions;
 
@@ -15,7 +16,30 @@ namespace Nop.Plugin.Misc.Supplier.Factories
         {
             _supplierService = supplierService;
         }
-
+        public SupplierEntity PrepareEntity(SupplierModel model)
+        {
+            return new SupplierEntity
+            {
+                Id = model.Id,
+                Name = model.Name,
+                ContactPerson = model.ContactPerson,
+                Phone = model.Phone,
+                Email = model.Email,
+                Address = model.Address
+            };
+        }
+        public SupplierModel PrepareModel(SupplierEntity entity)
+        {
+            return new SupplierModel
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                ContactPerson = entity.ContactPerson,
+                Phone = entity.Phone,
+                Email = entity.Email,
+                Address = entity.Address
+            };
+        }
         public async Task<SupplierListModel> PrepareSupplierListModelAsync(SupplierSearchModel searchModel)
         {
             var suppliers = await _supplierService.GetAllAsync(

@@ -12,7 +12,7 @@
 }
 
 <div class="content-header clearfix">
-	<h1 class="float-left">Suppliers</h1>
+	<h1 class="float-left">@T("Admin.Suppliers")</h1>
 	<div class="float-right">
 		<a asp-action="Create" class="btn btn-primary">
 			<i class="fas fa-plus-square"></i> @T("Admin.Common.AddNew")
@@ -39,11 +39,7 @@
 									<div class="form-group row">
 										<div class="col-md-4">
 											<div class="label-wrapper">
-												<label class="col-form-label" for="SearchName">Supplier Name</label>
-												<!-- Tooltip for SearchName -->
-												<div title="Search by a supplier name." data-toggle="tooltip" class="ico-help" data-original-title="A supplier name.">
-													<i class="fas fa-circle-question"></i>
-												</div>
+												<nop-label asp-for="SearchName" asp-resource-key="Admin.Suppliers.List.SearchName" asp-help-text="Admin.Suppliers.List.SearchName.Hint" />
 											</div>
 										</div>
 										<div class="col-md-8">
@@ -56,11 +52,7 @@
 									<div class="form-group row">
 										<div class="col-md-4">
 											<div class="label-wrapper">
-												<label class="col-form-label" for="SearchEmail">Supplier Email</label>
-												<!-- Tooltip for SearchEmail -->
-												<div title="Search by a supplier email." data-toggle="tooltip" class="ico-help" data-original-title="Search by a supplier email.">
-													<i class="fas fa-circle-question"></i>
-												</div>
+												<nop-label asp-for="SearchEmail" asp-resource-key="Admin.Suppliers.Fields.Email" asp-help-text="Admin.Suppliers.Fields.Email.Hint" />
 											</div>
 										</div>
 										<div class="col-md-8">
@@ -70,15 +62,11 @@
 								</div>
 							</div>
 						</div>
-
-
-
-							<div class="row">
-								<div class="text-center col-12">
-									<button type="button" id="search-suppliers" class="btn btn-primary btn-search">
-										<i class="fas fa-magnifying-glass"></i> @T("Admin.Common.Search")
-									</button>
-								</div>
+						<div class="row">
+							<div class="text-center col-12">
+								<button type="button" id="search-suppliers" class="btn btn-primary btn-search">
+									<i class="fas fa-magnifying-glass"></i> @T("Admin.Common.Search")
+								</button>
 							</div>
 						</div>
 					</div>
@@ -88,33 +76,33 @@
 				<div class="card card-default">
 					<div class="card-body">
 						@await Html.PartialAsync("Table", new DataTablesModel
- {
-	 Name = "suppliers-grid",
-	 UrlRead = new DataUrl("List", "Supplier", null),
-	 SearchButtonId = "search-suppliers",
-	 Length = Model.PageSize,
-	 LengthMenu = Model.AvailablePageSizes,
-	 Filters = new List<FilterParameter>
 						{
-						new FilterParameter(nameof(Model.SearchName)),
-						new FilterParameter(nameof(Model.SearchEmail))
-						},
-	 ColumnCollection = new List<ColumnProperty>
-						{
-						new ColumnProperty(nameof(SupplierModel.Name)) { Title = "Name" },
-						new ColumnProperty(nameof(SupplierModel.ContactPerson)) { Title = "Contact Person" },
-						new ColumnProperty(nameof(SupplierModel.Phone)) { Title = "Phone" },
-						new ColumnProperty(nameof(SupplierModel.Email)) { Title = "Email" },
-						new ColumnProperty(nameof(SupplierModel.Address)) { Title = "Address" },
-						new ColumnProperty(nameof(SupplierModel.Id))
-						{
-						Title = T("Admin.Common.Edit").Text,
-						Width = "50",
-						ClassName =  NopColumnClassDefaults.Button,
-						Render = new RenderButtonEdit(new DataUrl("~/Admin/Supplier/Edit"))
-						}
-						}
- })
+							Name = "suppliers-grid",
+							UrlRead = new DataUrl("List", "Supplier", null),
+							SearchButtonId = "search-suppliers",
+							Length = Model.PageSize,
+							LengthMenu = Model.AvailablePageSizes,
+							Filters = new List<FilterParameter>
+							{
+								new FilterParameter(nameof(Model.SearchName)),
+								new FilterParameter(nameof(Model.SearchEmail))
+							},
+							ColumnCollection = new List<ColumnProperty>
+							{
+								new ColumnProperty(nameof(SupplierModel.Name)) { Title = T("Admin.Suppliers.Fields.Name").Text },
+								new ColumnProperty(nameof(SupplierModel.ContactPerson)) { Title = T("Admin.Suppliers.Fields.ContactPerson").Text },
+								new ColumnProperty(nameof(SupplierModel.Phone)) { Title = T("Admin.Suppliers.Fields.Phone").Text },
+								new ColumnProperty(nameof(SupplierModel.Email)) { Title = T("Admin.Suppliers.Fields.Email").Text },
+								new ColumnProperty(nameof(SupplierModel.Address)) { Title = T("Admin.Suppliers.Fields.Address").Text },
+								new ColumnProperty(nameof(SupplierModel.Id))
+								{
+									Title = T("Admin.Common.Edit").Text,
+									Width = "50",
+									ClassName =  NopColumnClassDefaults.Button,
+									Render = new RenderButtonEdit(new DataUrl("~/Admin/Supplier/Edit"))
+								}
+							}
+						})
 					</div>
 				</div>
 			</div>
