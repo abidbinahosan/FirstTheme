@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
+using System.Text.RegularExpressions;
 
 namespace Nop.Plugin.Misc.Supplier.Model;
 // Change SupplierModel to a record to match the inheritance requirement of BaseNopModel  
@@ -30,5 +31,22 @@ public record SupplierModel : BaseNopEntityModel, ILocalizedModel<SupplierLocali
     public SupplierModel()
     {
         Locales = new List<SupplierLocalizedModel>();
+    }
+    // ✅ Computed property to clean HTML from Description
+    public string CleanDescription
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Description))
+                return string.Empty;
+
+            // Step 1: Remove HTML tags
+            var noHtml = Regex.Replace(Description, "<.*?>", string.Empty);
+
+            // Step 2: Remove non-breaking spaces (&nbsp;)
+            var cleanText = noHtml.Replace("&nbsp;", " ").Trim();
+
+            return cleanText;
+        }
     }
 }
