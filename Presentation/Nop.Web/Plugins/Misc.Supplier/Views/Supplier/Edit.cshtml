@@ -1,16 +1,39 @@
 ﻿@model Nop.Plugin.Misc.Supplier.Domain.SupplierEntity
+
 @{
 	Layout = "_AdminLayout";
-	ViewBag.Title = "Edit Supplier";
+	ViewBag.PageTitle = T("Admin.Suppliers.EditSupplierDetails").Text;
+	NopHtml.SetActiveMenuItemSystemName("Suppliers");
 }
 
-<div class="px-4">
-	<h1>Edit Supplier</h1>
-</div>
+<form asp-controller="Supplier" asp-action="Edit" method="post">
+	<div class="content-header clearfix">
+		<h1 class="float-left">
+			@T("Admin.Suppliers.EditSupplierDetails") - @Model.Name
+			<small>
+				<i class="fas fa-arrow-circle-left"></i>
+				<a asp-action="List">@T("Admin.Suppliers.BackToList")</a>
+			</small>
+		</h1>
+		<div class="float-right">
+			<button type="submit" name="save" class="btn btn-primary">
+				<i class="far fa-floppy-disk"></i>
+				@T("Admin.Common.Save")
+			</button>
+			<button type="submit" name="save-continue" class="btn btn-primary">
+				<i class="far fa-floppy-disk"></i>
+				@T("Admin.Common.SaveContinue")
+			</button>
+			<span id="supplier-delete" class="btn btn-danger">
+				<i class="far fa-trash-can"></i>
+				@T("Admin.Common.Delete")
+			</span>
+			@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.VendorDetailsButtons, additionalData = Model })
+		</div>
+	</div>
 
-<div class="px-4">
-	<!-- Padding wrapper -->
-	<form asp-action="Edit" method="post">
+	<div class="px-4">
+		<!-- Form Fields -->
 		<input type="hidden" asp-for="Id" />
 
 		<div class="form-group">
@@ -33,8 +56,10 @@
 			<label asp-for="Address"></label>
 			<input asp-for="Address" class="form-control" />
 		</div>
+	</div>
 
-		<button type="submit" class="btn btn-primary">Save</button>
-		<a asp-action="Index" class="btn btn-secondary">Cancel</a>
-	</form>
-</div>
+	@await Html.PartialAsync("~/Plugins/Misc.Supplier/Views/Shared/_CreateOrUpdate.cshtml", Model)
+
+</form>
+
+<nop-delete-confirmation asp-model-id="@Model.Id" asp-button-id="supplier-delete" />

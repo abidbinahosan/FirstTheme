@@ -1,0 +1,88 @@
+@model Nop.Plugin.Misc.Supplier.Domain.SupplierEntity
+
+<div class="card-body">
+	@await Html.PartialAsync("Table", new DataTablesModel
+{
+	Name = "suppliernotes-grid",
+	UrlRead = new DataUrl("SupplierNotesSelect", "Supplier", new RouteValueDictionary { [nameof(Model.SupplierNoteSearchModel.SupplierId)] = Model.SupplierNoteSearchModel.SupplierId }),
+	UrlDelete = new DataUrl("SupplierNoteDelete", "Supplier", null),
+	Length = Model.SupplierNoteSearchModel.PageSize,
+	LengthMenu = Model.SupplierNoteSearchModel.AvailablePageSizes,
+	ColumnCollection = new List<ColumnProperty>
+	{
+	new ColumnProperty(nameof(SupplierNoteModel.CreatedOn))
+	{
+	Title = T("Admin.Suppliers.SupplierNotes.Fields.CreatedOn").Text,
+	Width = "200",
+	Render = new RenderDate()
+	},
+	new ColumnProperty(nameof(SupplierNoteModel.Note))
+	{
+	Title = T("Admin.Suppliers.SupplierNotes.Fields.Note").Text,
+	Encode = false
+	},
+	new ColumnProperty(nameof(SupplierNoteModel.Id))
+	{
+	Title = T("Admin.Common.Delete").Text,
+	Width = "100",
+	Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+	ClassName =  NopColumnClassDefaults.Button
+	}
+	}
+})
+
+	<div class="card card-default">
+		<div class="card-header">
+			@T("Admin.Suppliers.SupplierNotes.AddTitle")
+		</div>
+		<div class="card-body">
+			<div class="form-group row">
+				<div class="col-md-3">
+					<nop-label asp-for="AddSupplierNoteMessage" />
+				</div>
+				<div class="col-md-9">
+					<nop-editor asp-for="AddSupplierNoteMessage" />
+					<span asp-validation-for="AddSupplierNoteMessage"></span>
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="col-md-9 offset-md-3">
+					<button type="button" id="addSupplierNote" class="btn btn-primary">@T("Admin.Suppliers.SupplierNotes.AddButton")</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	$(function() {
+		$('#addSupplierNote').click(function() {
+			var supplierNoteMessage = $("#@Html.IdFor(model => model.AddSupplierNoteMessage)").val();
+			$('#addSupplierNote').attr('disabled', true);
+
+			var postData = {
+				message: supplierNoteMessage,
+				supplierId: '@(Model.Id)'
+			};
+			addAntiForgeryToken(postData);
+
+			$.ajax({
+				cache: false,
+				type: "POST",
+				url: "@(Url.Action("SupplierNoteAdd", "Supplier"))",
+				data: postData,
+				success: function (data, textStatus, jqXHR) {
+					if (data.Result) {
+						//reload grid
+						$("#suppliernotes-grid").DataTable().ajax.reload();
+					} else {
+						//display errors if returned
+						display_nop_error(data);
+					}
+				},
+				complete: function (jqXHR, textStatus) {
+					$('#addSupplierNote').attr('disabled', false);
+				}
+			});
+		});
+	});
+</script>

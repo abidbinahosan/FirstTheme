@@ -1,16 +1,11 @@
-﻿{
+{
   "Group": "Widget",
   "FriendlyName": "First Widget",
-  "SupportedVersions": [
-    "4.80"
-  ],
+  "SystemName": "Widget.First",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
   "Author": "BS23",
   "DisplayOrder": 1,
   "FileName": "Nop.Plugin.Widget.First.dll",
-  "Description": "This is a sample plugin to display a Hello World widget on the site.",
-  "LimitedToStores": [],
-  "LimitedToCustomerRoles": [],
-  "DependsOnSystemNames": [],
-  "SystemName": "Widget.First",
-  "Version": "4.80.1"
+  "Description": "This is a sample plugin to display a Hello World widget on the site."
 }
