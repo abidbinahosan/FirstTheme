@@ -148,7 +148,7 @@ public class SupplierPlugin : BasePlugin
                 return;
 
             // Add custom menu item in the admin panel
-            eventMessage.RootMenuItem.InsertBefore("Local plugins",
+            eventMessage.RootMenuItem.InsertAfter("Help",
                 new AdminMenuItem
                 {
                     SystemName = "Misc.Supplier", // Unique name for your plugin
