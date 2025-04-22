@@ -8,9 +8,12 @@ using Nop.Services.Localization;
 using Nop.Core.Infrastructure;
 using Nop.Data;
 using System.Globalization;
+using Nop.Plugin.Misc.Supplier.Components;
+using Nop.Services.Cms;
+using Nop.Web.Framework.Infrastructure;
 
 namespace Nop.Plugin.Misc.Supplier;
-public class SupplierPlugin : BasePlugin
+public class SupplierPlugin : BasePlugin, IWidgetPlugin
 {
     private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
@@ -100,7 +103,9 @@ public class SupplierPlugin : BasePlugin
              "Admin.Suppliers.Fields.Email",
              "Admin.Suppliers.Fields.Email.Hint",
              "Admin.Suppliers.Fields.Address",
-             "Admin.Suppliers.Fields.Address.Hint"
+             "Admin.Suppliers.Fields.Address.Hint",
+             "Admin.Suppliers.Fields.ContactPerson.Required"
+
          };
             await _localizationService.DeleteLocaleResourcesAsync(resourceKeys);
 
@@ -130,6 +135,39 @@ public class SupplierPlugin : BasePlugin
                 ["Admin.Suppliers.Fields.ContactPerson.Required"] = "Contact Person is Required!"
             });
         }
+    }
+
+    //Widget
+    /// <summary>
+    /// Gets a value indicating whether to hide this plugin on the widget list page in the admin area
+    /// </summary>
+    public bool HideInWidgetList => false;
+
+    /// <summary>
+    /// Gets a type of a view component for displaying widget
+    /// </summary>
+    /// <param name="widgetZone">Name of the widget zone</param>
+    /// <returns>View component type</returns>
+    public Type GetWidgetViewComponent(string widgetZone)
+    {
+        return typeof(ExampleWidgetViewComponent);
+    }
+
+    /// <summary>
+    /// Gets widget zones where this widget should be rendered
+    /// </summary>
+    /// <returns>
+    /// A task that represents the asynchronous operation
+    /// The task result contains the widget zones
+    /// </returns>
+    public Task<IList<string>> GetWidgetZonesAsync()
+    {
+        return Task.FromResult<IList<string>>(new List<string>
+         {
+             AdminWidgetZones.ProductDetailsBlock
+
+         });
+
     }
     // Add an event consumer to add a menu item in the admin panel
     public class EventConsumer : IConsumer<AdminMenuCreatedEvent>

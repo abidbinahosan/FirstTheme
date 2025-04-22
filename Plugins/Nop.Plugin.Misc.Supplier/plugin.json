@@ -2,7 +2,7 @@
   "Group": "Misc",
   "FriendlyName": "Supplier",
   "SystemName": "Misc.Supplier",
-  "Version": "4.80.6",
+  "Version": "4.80.7",
   "SupportedVersions": [ "4.80" ],
   "Author": "Brain Station 23",
   "DisplayOrder": 1,

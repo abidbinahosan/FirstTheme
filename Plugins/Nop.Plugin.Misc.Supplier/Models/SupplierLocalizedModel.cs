@@ -17,4 +17,7 @@ public class SupplierLocalizedModel : ILocalizedLocaleModel
 
     [NopResourceDisplayName("Admin.Suppliers.Fields.Address")]
     public string Address { get; set; }
+
+    [NopResourceDisplayName("Admin.Suppliers.Fields.Description")]
+    public string Description { get; set; }
 }
