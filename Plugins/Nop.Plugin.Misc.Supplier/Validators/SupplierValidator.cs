@@ -4,7 +4,6 @@ using Nop.Services.Localization;
 using Nop.Web.Framework.Validators;
 
 namespace Nop.Plugin.Misc.Supplier.Validators;
-
 public partial class AddressValidator : BaseNopValidator<SupplierModel>
 {
     public AddressValidator(ILocalizationService localizationService)

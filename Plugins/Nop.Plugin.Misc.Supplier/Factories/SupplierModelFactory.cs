@@ -8,7 +8,6 @@ namespace Nop.Plugin.Misc.Supplier.Factories
     public class SupplierModelFactory : ISupplierModelFactory
     {
         private readonly ISupplierService _supplierService;
-
         public SupplierModelFactory(ISupplierService supplierService)
         {
             _supplierService = supplierService;
@@ -23,7 +22,7 @@ namespace Nop.Plugin.Misc.Supplier.Factories
                 Phone = model.Phone,
                 Email = model.Email,
                 Address = model.Address,
-                Description = model.Description,  // New property
+                Description = model.Description,
                 IsActive = model.IsActive
             };
         }
@@ -37,8 +36,8 @@ namespace Nop.Plugin.Misc.Supplier.Factories
                 Phone = entity.Phone,
                 Email = entity.Email,
                 Address = entity.Address,
-                Description = entity.Description, // New property
-                IsActive = entity.IsActive        // New property
+                Description = entity.Description,
+                IsActive = entity.IsActive   
             };
         }
         public async Task<SupplierListModel> PrepareSupplierListModelAsync(SupplierSearchModel searchModel)
@@ -60,11 +59,10 @@ namespace Nop.Plugin.Misc.Supplier.Factories
                     Phone = supplier.Phone,
                     Email = supplier.Email,
                     Address = supplier.Address,
-                    Description = supplier.Description, // New property
+                    Description = supplier.Description,
                     IsActive = supplier.IsActive
                 }).ToAsyncEnumerable();
             });
-
             return model;
         }
     }

@@ -2,7 +2,6 @@
 using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Plugin.Misc.Supplier.Model;
-// Change the class to a record to fix CS8865
 public record SupplierSearchModel : BaseSearchModel
 {
     [NopResourceDisplayName("Admin.Suppliers.List.SearchName")]

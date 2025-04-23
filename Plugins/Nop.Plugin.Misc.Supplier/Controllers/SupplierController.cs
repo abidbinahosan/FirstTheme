@@ -41,8 +41,6 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
             _localizedEntityService = localizedEntityService;
         }
 
-
-
         public async Task<IActionResult> Index()
         {
             var model = new SupplierSearchModel();
@@ -105,19 +103,15 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
             }
         }
 
-        // GET: Supplier/Edit/{id}
         public async Task<IActionResult> Edit(int id)
         {
-            // Fetch the SupplierEntity by ID
             var supplierEntity = await _supplierService.GetByIdAsync(id);
 
             if (supplierEntity == null)
             {
-                // Handle case where supplier is not found (e.g., 404)
                 return NotFound();
             }
 
-            // SupplierEntity to SupplierModel
             var supplierModel = _supplierModelFactory.PrepareModel(supplierEntity);
             supplierModel.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<SupplierLocalizedModel>(
              async (locale, languageId) =>
@@ -127,11 +121,9 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                  locale.Description = await _localizationService.GetLocalizedAsync(supplierEntity, x => x.Description, languageId, false, false);
 
              });
-            // Return the Edit view with the SupplierModel
             return View("~/Plugins/Misc.Supplier/Views/Supplier/Edit.cshtml", supplierModel);
         }
 
-        // POST: Supplier/Edit/{id}
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
         public async Task<IActionResult> Edit(SupplierModel model, bool continueEditing)
         {
@@ -139,7 +131,6 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
             {
                 var supplierEntity = _supplierModelFactory.PrepareEntity(model);
 
-                // Update the SupplierEntity in the database
                 await _supplierService.UpdateAsync(supplierEntity);
                 foreach (var localized in model.Locales)
                 {
@@ -149,7 +140,6 @@ namespace Nop.Plugin.Misc.Supplier.Controllers
                 }
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Vendors.Updated"));
-
 
                 if (!continueEditing)
                     return RedirectToAction("Index");

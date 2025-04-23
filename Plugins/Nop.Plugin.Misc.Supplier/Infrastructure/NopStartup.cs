@@ -16,7 +16,6 @@ namespace Nop.Plugin.Misc.Supplier.Infrastructure
         }
 
         public void Configure(IApplicationBuilder application) { }
-
         public int Order => 3000;
     }
 }
