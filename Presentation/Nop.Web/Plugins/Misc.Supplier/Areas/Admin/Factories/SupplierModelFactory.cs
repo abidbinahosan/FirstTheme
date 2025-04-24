@@ -2,15 +2,18 @@
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Domain;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Models;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Services;
+using Nop.Core.Caching;
 
 namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Factories
 {
     public class SupplierModelFactory : ISupplierModelFactory
     {
         private readonly ISupplierService _supplierService;
-        public SupplierModelFactory(ISupplierService supplierService)
+        private readonly IStaticCacheManager _staticCacheManager;
+        public SupplierModelFactory(ISupplierService supplierService, IStaticCacheManager staticCacheManager)
         {
             _supplierService = supplierService;
+            _staticCacheManager = staticCacheManager;
         }
         public SupplierEntity PrepareEntity(SupplierModel model)
         {

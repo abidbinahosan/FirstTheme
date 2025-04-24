@@ -1,5 +1,6 @@
 ﻿using Nop.Core;
 using Nop.Data;
+using Nop.Core.Caching;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Domain;
 
 namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Services
@@ -8,15 +9,29 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Services
     {
         private readonly IRepository<SupplierEntity> _repository;
         private readonly IRepository<ProductSupplierMapping> _productSupplierMappingRepository;
-        public SupplierService(IRepository<SupplierEntity> repository, IRepository<ProductSupplierMapping> productSupplierMappingRepository)
+        private readonly IStaticCacheManager _staticCacheManager;
+        public SupplierService(IRepository<SupplierEntity> repository, IRepository<ProductSupplierMapping> productSupplierMappingRepository, IStaticCacheManager staticCacheManager)
         {
             _repository = repository;
             _productSupplierMappingRepository = productSupplierMappingRepository;
+            _staticCacheManager = staticCacheManager;
         }
 
-        public async Task InsertAsync(SupplierEntity supplier) => await _repository.InsertAsync(supplier);
-        public async Task UpdateAsync(SupplierEntity supplier) => await _repository.UpdateAsync(supplier);
-        public async Task DeleteAsync(SupplierEntity supplier) => await _repository.DeleteAsync(supplier);
+        public async Task InsertAsync(SupplierEntity supplier)
+        {
+            await _repository.InsertAsync(supplier);
+            await _staticCacheManager.RemoveByPrefixAsync(SupplierDefaults.AdminSupplierAllPrefixCacheKey);
+        }
+        public async Task UpdateAsync(SupplierEntity supplier)
+        {
+            await _repository.UpdateAsync(supplier);
+            await _staticCacheManager.RemoveByPrefixAsync(SupplierDefaults.AdminSupplierAllPrefixCacheKey);
+        }
+        public async Task DeleteAsync(SupplierEntity supplier)
+        {
+            await _repository.DeleteAsync(supplier);
+            await _staticCacheManager.RemoveByPrefixAsync(SupplierDefaults.AdminSupplierAllPrefixCacheKey);
+        }
         public async Task<SupplierEntity> GetByIdAsync(int id) => await _repository.GetByIdAsync(id);
         public async Task<IList<SupplierEntity>> GetAllSuppliersAsync()
         {
@@ -24,17 +39,26 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Services
         }
         public async Task<IPagedList<SupplierEntity>> GetAllAsync(string name, string email, int pageIndex, int pageSize)
         {
-            var query = _repository.Table;
+            name = string.IsNullOrWhiteSpace(name) ? null : name.Trim();
+            email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
 
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(s => s.Name.Contains(name));
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(SupplierDefaults.AdminSupplierAllModelKey,
+                             name, email, pageIndex, pageSize);
 
-            if (!string.IsNullOrEmpty(email))
-                query = query.Where(s => s.Email.Contains(email));
+            var allSuppliers = await _staticCacheManager.GetAsync<IList<SupplierEntity>>(cacheKey, async () =>
+            {
+                Console.WriteLine("============================== CACHE CHECKED =========================");
+                var query = _repository.Table;
 
-            query = query.OrderBy(s => s.Name); 
+                if (!string.IsNullOrEmpty(name))
+                    query = query.Where(s => s.Name.Contains(name));
+                if (!string.IsNullOrEmpty(email))
+                    query = query.Where(s => s.Email.Contains(email));
 
-            return await query.ToPagedListAsync(pageIndex, pageSize);
+                return await query.OrderBy(s => s.Name).ToListAsync();
+            });
+
+            return new PagedList<SupplierEntity>(allSuppliers, pageIndex, pageSize);
         }
 
         public async Task InsertOrUpdateProductSupplierMappingAsync(int productId, int supplierId)
