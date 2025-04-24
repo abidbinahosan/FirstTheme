@@ -47,7 +47,7 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
 
             model.SetGridPageSize();
 
-            return View("~/Plugins/Misc.Supplier/Areas/Admin/Views/Supplier/Index.cshtml", model);
+            return View(model);
         }
 
         [HttpPost]
@@ -65,7 +65,7 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
                 {
                     locale.LanguageId = languageId;
                 });
-            return View("~/Plugins/Misc.Supplier/Areas/Admin/Views/Supplier/Create.cshtml", model);
+            return View(model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
@@ -94,8 +94,7 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
 
                     return RedirectToAction("Edit", new { id = supplierEntity.Id });
                 }
-                // If the model state is not valid, return the same view with the current model
-                return View("~/Plugins/Misc.Supplier/Areas/Admin/Views/Supplier/Create.cshtml", model);
+                return View(model);
             }
             catch (Exception e)
             {
@@ -110,8 +109,8 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
             if (supplierEntity == null)
                 return NotFound();
 
-            var supplierModel = _supplierModelFactory.PrepareModel(supplierEntity);
-            supplierModel.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<SupplierLocalizedModel>(
+            var model = _supplierModelFactory.PrepareModel(supplierEntity);
+            model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync<SupplierLocalizedModel>(
              async (locale, languageId) =>
              {
                  locale.LanguageId = languageId;
@@ -119,7 +118,7 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
                  locale.Description = await _localizationService.GetLocalizedAsync(supplierEntity, x => x.Description, languageId, false, false);
 
              });
-            return View("~/Plugins/Misc.Supplier/Areas/Admin/Views/Supplier/Edit.cshtml", supplierModel);
+            return View(model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
@@ -144,7 +143,7 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Controllers
 
                 return RedirectToAction("Edit", new { id = supplierEntity.Id });
             }
-            return View("~/Plugins/Misc.Supplier/Areas/Admin/Views/Supplier/Edit.cshtml", model);
+            return View(model);
         }
 
         [HttpPost]

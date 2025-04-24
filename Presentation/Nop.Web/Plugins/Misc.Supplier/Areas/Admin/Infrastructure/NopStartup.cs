@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
@@ -13,6 +14,10 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Infrastructure
         {
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<ISupplierModelFactory, SupplierModelFactory>();
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.ViewLocationExpanders.Add(new ViewLocationExpander());
+            });
         }
 
         public void Configure(IApplicationBuilder application) { }

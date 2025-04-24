@@ -78,7 +78,7 @@
     <Compile Update="Areas\Admin\Factories\ISupplierModelFactory.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Areas\Admin\Factories\PluginViewLocationExpander.cs">
+    <Compile Update="Areas\Admin\Factories\ViewLocationExpander.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Areas\Admin\Factories\SupplierModelFactory.cs">
@@ -143,9 +143,6 @@
     <None Update="Areas\Admin\Views\Supplier\_CreateOrUpdate.Info.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Areas\Admin\" />
   </ItemGroup>
   <!-- This target execute after "Build" target -->
   <Target Name="NopTarget" AfterTargets="Build">
