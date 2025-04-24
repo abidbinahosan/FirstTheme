@@ -63,6 +63,9 @@
     <Compile Update="Areas\Admin\Domain\ProductSupplierMapping.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Areas\Admin\Infrastructure\SupplierLocaleResources.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Areas\Admin\Models\SupplierProductModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -134,10 +137,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Areas\Admin\Views\Components\Create.cshtml">
+    <None Update="Areas\Admin\Views\Components\SupplierWidget\Create.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Areas\Admin\Views\Components\Edit.cshtml">
+    <None Update="Areas\Admin\Views\Components\SupplierWidget\Edit.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Areas\Admin\Views\Supplier\_CreateOrUpdate.cshtml">

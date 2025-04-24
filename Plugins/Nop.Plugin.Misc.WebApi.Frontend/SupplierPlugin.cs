@@ -33,7 +33,7 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
     {
         try
         {
-            var resourceKeys = SupplierLocaleResources.GetAll().Keys.ToArray();
+            var resourceKeys = SupplierLocaleResources.GetAll().Keys.ToArray;
             await _localizationService.DeleteLocaleResourcesAsync(resourceKeys);
             await _dataProvider.ExecuteNonQueryAsync("DROP TABLE IF EXISTS [Supplier]");
             await base.UninstallAsync();
