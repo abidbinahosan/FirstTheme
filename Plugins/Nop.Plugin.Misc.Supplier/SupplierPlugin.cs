@@ -1,16 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Nop.Services.Events;
+﻿using Nop.Services.Events;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
 using Nop.Web.Framework.Events;
 using Nop.Web.Framework.Menu;
 using Nop.Services.Localization;
-using Nop.Core.Infrastructure;
 using Nop.Data;
-using System.Globalization;
-using Nop.Plugin.Misc.Supplier.Components;
 using Nop.Services.Cms;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Plugin.Misc.Supplier.Areas.Admin.Components;
 
 namespace Nop.Plugin.Misc.Supplier;
 public class SupplierPlugin : BasePlugin, IWidgetPlugin
@@ -68,7 +65,10 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
             ["Admin.Suppliers.Fields.Description.Hint"] = "Enter the supplier's description",
 
             ["Admin.Suppliers.Fields.IsActive"] = "Active Status",
-            ["Admin.Suppliers.Fields.IsActive.Hint"] = "Enter the supplier's active status"
+            ["Admin.Suppliers.Fields.IsActive.Hint"] = "Enter the supplier's active status",
+
+            ["Admin.Supplier.Widget.Description"] = "Supplier List",
+            ["Admin.Supplier.Widget"] = "Product Supplier"
         };
 
         await _localizationService.AddOrUpdateLocaleResourceAsync(resources);
@@ -96,8 +96,9 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
              "Admin.Suppliers.Fields.Email.Hint",
              "Admin.Suppliers.Fields.Address",
              "Admin.Suppliers.Fields.Address.Hint",
-             "Admin.Suppliers.Fields.ContactPerson.Required"
-
+             "Admin.Suppliers.Fields.ContactPerson.Required",
+             "Admin.Supplier.Widget.Description",
+             "Admin.Supplier.Widget"
          };
             await _localizationService.DeleteLocaleResourcesAsync(resourceKeys);
             await _dataProvider.ExecuteNonQueryAsync("DROP TABLE IF EXISTS [Supplier]");
@@ -134,7 +135,7 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
 
     public Type GetWidgetViewComponent(string widgetZone)
     {
-        return typeof(ExampleWidgetViewComponent);
+        return typeof(SupplierWidgetViewComponent);
     }
 
     /// <summary>
@@ -153,7 +154,6 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
          });
 
     }
-    // Add an event consumer to add a menu item in the admin panel
     public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
     {
         private readonly IPermissionService _permissionService;

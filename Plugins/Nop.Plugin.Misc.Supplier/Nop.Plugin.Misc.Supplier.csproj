@@ -15,8 +15,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Area\**" />
+    <EmbeddedResource Remove="Area\**" />
+    <None Remove="Area\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="plugin.json" />
-    <None Remove="Views\ManufacturerSlider.cshtml" />
+    <None Remove="Areas\Admin\Views\ManufacturerSlider.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)\Presentation\Nop.Web.Framework\Nop.Web.Framework.csproj" />
@@ -30,19 +35,16 @@
     <Content Include="plugin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Supplier\Create.cshtml">
+    <Content Include="Areas\Admin\Views\Supplier\Create.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\_ViewImports.cshtml">
+    <Content Include="Areas\Admin\Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Supplier\Index.cshtml">
+    <Content Include="Areas\Admin\Views\Supplier\Index.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Views\Supplier\Edit.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Views\Supplier\Default.cshtml">
+    <Content Include="Areas\Admin\Views\Supplier\Edit.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -55,67 +57,73 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Components\ExampleWidgetViewComponent.cs">
+    <Compile Update="Areas\Admin\Components\SupplierWidgetViewComponent.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Areas\Admin\Domain\ProductSupplierMapping.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Areas\Admin\Models\SupplierProductModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="Component\ManufacturerViewComponents.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Controllers\SupplierController.cs">
+    <Compile Update="Areas\Admin\Controllers\SupplierController.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Domain\SupplierEntity.cs">
+    <Compile Update="Areas\Admin\Domain\SupplierEntity.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Factories\ISupplierModelFactory.cs">
+    <Compile Update="Areas\Admin\Factories\ISupplierModelFactory.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Factories\PluginViewLocationExpander.cs">
+    <Compile Update="Areas\Admin\Factories\PluginViewLocationExpander.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Factories\SupplierModelFactory.cs">
+    <Compile Update="Areas\Admin\Factories\SupplierModelFactory.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="FirstPlugin.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\DependencyRegistrar.cs">
+    <Compile Update="Areas\Admin\Infrastructure\DependencyRegistrar.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\NopStartup.cs">
+    <Compile Update="Areas\Admin\Infrastructure\NopStartup.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\RouteProvider.cs">
+    <Compile Update="Areas\Admin\Infrastructure\RouteProvider.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Infrastructure\SupplierWidgetZones.cs">
+    <Compile Update="Areas\Admin\Infrastructure\SupplierWidgetZones.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="ManufacturerSliderPlugin.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Mapping\SupplierEntityBuilder.cs">
+    <Compile Update="Areas\Admin\Mapping\SupplierEntityBuilder.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Migrations\SchemaMigration.cs">
+    <Compile Update="Areas\Admin\Migrations\SchemaMigration.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\SupplierListModel.cs">
+    <Compile Update="Areas\Admin\Models\SupplierListModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\SupplierLocalizedModel.cs">
+    <Compile Update="Areas\Admin\Models\SupplierLocalizedModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\SupplierModel.cs">
+    <Compile Update="Areas\Admin\Models\SupplierModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Models\SupplierSearchModel.cs">
+    <Compile Update="Areas\Admin\Models\SupplierSearchModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Services\ISupplierService.cs">
+    <Compile Update="Areas\Admin\Services\ISupplierService.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Update="Services\SupplierService.cs">
+    <Compile Update="Areas\Admin\Services\SupplierService.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Update="SupplierPlugin.cs">
@@ -123,10 +131,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Update="Views\Supplier\_CreateOrUpdate.cshtml">
+    <None Update="Areas\Admin\Views\Components\Create.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Views\Supplier\_CreateOrUpdate.Info.cshtml">
+    <None Update="Areas\Admin\Views\Components\Edit.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Areas\Admin\Views\Supplier\_CreateOrUpdate.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Areas\Admin\Views\Supplier\_CreateOrUpdate.Info.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

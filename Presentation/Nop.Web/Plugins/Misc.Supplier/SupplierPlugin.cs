@@ -1,16 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Nop.Services.Events;
+﻿using Nop.Services.Events;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
 using Nop.Web.Framework.Events;
 using Nop.Web.Framework.Menu;
 using Nop.Services.Localization;
-using Nop.Core.Infrastructure;
 using Nop.Data;
-using System.Globalization;
-using Nop.Plugin.Misc.Supplier.Components;
 using Nop.Services.Cms;
 using Nop.Web.Framework.Infrastructure;
+using Nop.Plugin.Misc.Supplier.Areas.Admin.Components;
 
 namespace Nop.Plugin.Misc.Supplier;
 public class SupplierPlugin : BasePlugin, IWidgetPlugin
@@ -18,17 +15,14 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
     private readonly IPermissionService _permissionService;
     private readonly ILocalizationService _localizationService;
     private readonly INopDataProvider _dataProvider;
-
     public SupplierPlugin(IPermissionService permissionService, ILocalizationService localizationService, INopDataProvider dataProvider)
     {
         _permissionService = permissionService;
         _localizationService = localizationService;
         _dataProvider = dataProvider;
     }
-
     public override async Task InstallAsync()
     {
-        // Installation logic here
         var resources = new Dictionary<string, string>
         {
             // Page title
@@ -38,7 +32,7 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
             ["Admin.Suppliers.Backtolist"] = "back to supplier list",
             ["Admin.Supplier.Added"] = "Supplier Added Successfully",
             ["Admin.Vendors.Updated"] = "Supplier Updated Successfully",
-            //Required
+            // Required
             ["Admin.Suppliers.Fields.Name.Required"] = "Supplier name is required",
             ["Admin.Suppliers.Fields.Email.Required"] = "Not a Valid Email",
             ["Admin.Suppliers.Fields.Phone.Required"] = "Supplier phone is required",
@@ -52,7 +46,6 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
             ["Admin.Suppliers.List.SearchName.Hint"] = "Search suppliers by their name.",
             ["Admin.Suppliers.List.SearchEmail"] = "Supplier Email",
             ["Admin.Suppliers.List.SearchEmail.Hint"] = "Search suppliers by their email address.",
-
             // Fields
             ["Admin.Suppliers.Fields.Name"] = "Name",
             ["Admin.Suppliers.Fields.Name.Hint"] = "Enter the supplier's name.",
@@ -72,21 +65,20 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
             ["Admin.Suppliers.Fields.Description.Hint"] = "Enter the supplier's description",
 
             ["Admin.Suppliers.Fields.IsActive"] = "Active Status",
-            ["Admin.Suppliers.Fields.IsActive.Hint"] = "Enter the supplier's active status"
+            ["Admin.Suppliers.Fields.IsActive.Hint"] = "Enter the supplier's active status",
+
+            ["Admin.Supplier.Widget.Description"] = "Supplier List",
+            ["Admin.Supplier.Widget"] = "Product Supplier"
         };
 
         await _localizationService.AddOrUpdateLocaleResourceAsync(resources);
-
-        // Register the event consumer to add the menu item in the admin panel
         await base.InstallAsync();
     }
 
     public override async Task UninstallAsync()
     {
-        // Uninstallation logic here
         try
         {
-            // Delete localization
             var resourceKeys = new[]
             {
              "Admin.Suppliers",
@@ -104,22 +96,17 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
              "Admin.Suppliers.Fields.Email.Hint",
              "Admin.Suppliers.Fields.Address",
              "Admin.Suppliers.Fields.Address.Hint",
-             "Admin.Suppliers.Fields.ContactPerson.Required"
-
+             "Admin.Suppliers.Fields.ContactPerson.Required",
+             "Admin.Supplier.Widget.Description",
+             "Admin.Supplier.Widget"
          };
             await _localizationService.DeleteLocaleResourcesAsync(resourceKeys);
-
-            // You can add custom logic for removing configurations, databases, etc.
-            // Drop table safely
             await _dataProvider.ExecuteNonQueryAsync("DROP TABLE IF EXISTS [Supplier]");
-            // Complete base uninstall
             await base.UninstallAsync();
         }
         catch (Exception ex)
         {
-            // Optional: log the exception
-            // _logger.InsertLog(LogLevel.Error, "Error uninstalling SupplierPlugin", ex.Message, ex);
-            throw; // Re-throw to keep uninstall logic clean
+            throw;
         }
     }
     public override async Task UpdateAsync(string currentVersion, string targetVersion)
@@ -129,7 +116,6 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
 
         if (current < target)
         {
-            //update here
             await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Admin.Suppliers.Fields.ContactPerson.Required"] = "Contact Person is Required!"
@@ -146,11 +132,10 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
     /// <summary>
     /// Gets a type of a view component for displaying widget
     /// </summary>
-    /// <param name="widgetZone">Name of the widget zone</param>
-    /// <returns>View component type</returns>
+
     public Type GetWidgetViewComponent(string widgetZone)
     {
-        return typeof(ExampleWidgetViewComponent);
+        return typeof(SupplierWidgetViewComponent);
     }
 
     /// <summary>
@@ -169,7 +154,6 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
          });
 
     }
-    // Add an event consumer to add a menu item in the admin panel
     public class EventConsumer : IConsumer<AdminMenuCreatedEvent>
     {
         private readonly IPermissionService _permissionService;
@@ -181,22 +165,18 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
 
         public async Task HandleEventAsync(AdminMenuCreatedEvent eventMessage)
         {
-            // Check for permissions before adding the menu item
             if (!await _permissionService.AuthorizeAsync(StandardPermission.Configuration.MANAGE_PLUGINS))
                 return;
 
-            // Add custom menu item in the admin panel
             eventMessage.RootMenuItem.InsertAfter("Help",
                 new AdminMenuItem
                 {
-                    SystemName = "Misc.Supplier", // Unique name for your plugin
-                    Title = "Supplier", // Title for the menu item
-                    Url = eventMessage.GetMenuItemUrl("Supplier", "Index"), // URL for the menu item
-                    //Url = "/Admin/Supplier/Index", // Explicit URL for the menu item pointing to the SupplierController's Index action
-                    IconClass = "far fa-dot-circle", // Icon for the menu item
-                    Visible = true, // Make the menu item visible
+                    SystemName = "Misc.Supplier", 
+                    Title = "Supplier", 
+                    Url = eventMessage.GetMenuItemUrl("Supplier", "Index"), 
+                    IconClass = "far fa-dot-circle", 
+                    Visible = true, 
                 });
         }
     }
-
 }
