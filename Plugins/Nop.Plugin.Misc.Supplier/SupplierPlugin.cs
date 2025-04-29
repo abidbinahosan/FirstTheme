@@ -38,7 +38,7 @@ public class SupplierPlugin : BasePlugin, IWidgetPlugin
             await _dataProvider.ExecuteNonQueryAsync("DROP TABLE IF EXISTS [Supplier]");
             await base.UninstallAsync();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

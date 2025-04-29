@@ -113,7 +113,7 @@
     },
     {
       "SystemName": "Misc.PurchaseOrderManager",
-      "Version": "4.80.1"
+      "Version": "4.80.2"
     }
   ],
   "PluginNamesToUninstall": [],

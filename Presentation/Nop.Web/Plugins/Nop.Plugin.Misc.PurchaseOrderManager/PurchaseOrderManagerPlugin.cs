@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Nop.Plugin.Misc.PurchaseOrderManager.Utility;
 using Nop.Services.Events;
+using Nop.Services.Localization;
 using Nop.Services.Plugins;
 using Nop.Services.Security;
 using Nop.Web.Framework.Events;
@@ -13,16 +10,25 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager
 {
     public class PurchaseOrderManagerPlugin : BasePlugin
     {
+        private readonly ILocalizationService _localizationService;
+
+        public PurchaseOrderManagerPlugin(ILocalizationService localizationService)
+        {
+            _localizationService = localizationService;
+        }
         public override async Task InstallAsync()
         {
-            //Logic during installation goes here... 
+            var resources = PurchaseOrderLocaleResources.GetAll();
+
+            await _localizationService.AddOrUpdateLocaleResourceAsync(resources);
 
             await base.InstallAsync();
         }
-
         public override async Task UninstallAsync()
         {
-            //Logic during uninstallation goes here... 
+            var resourceKeys = PurchaseOrderLocaleResources.GetAll().Keys.ToArray();
+
+            await _localizationService.DeleteLocaleResourcesAsync(resourceKeys);
 
             await base.UninstallAsync();
         }
