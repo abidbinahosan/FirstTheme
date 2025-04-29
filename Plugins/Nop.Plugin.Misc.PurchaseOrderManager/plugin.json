@@ -1,0 +1,11 @@
+{
+  "Group": "Misc",
+  "FriendlyName": "Purchase Order Manager",
+  "SystemName": "Misc.PurchaseOrderManager",
+  "Version": "4.80.1",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "Abid",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Misc.PurchaseOrderManager.dll",
+  "Description": "This is a plugin that perfom CRUD operation"
+} 

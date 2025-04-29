@@ -110,6 +110,10 @@
     {
       "SystemName": "Misc.Supplier",
       "Version": "4.80.12"
+    },
+    {
+      "SystemName": "Misc.PurchaseOrderManager",
+      "Version": "4.80.1"
     }
   ],
   "PluginNamesToUninstall": [],
