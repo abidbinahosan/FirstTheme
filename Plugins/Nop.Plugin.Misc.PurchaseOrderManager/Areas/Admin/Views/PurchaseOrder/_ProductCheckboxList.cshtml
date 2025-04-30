@@ -1,0 +1,10 @@
+﻿@model List<Product>
+
+<label>Select Products</label>
+@foreach (var product in Model)
+{
+	<div class="form-check">
+		<input class="form-check-input" type="checkbox" name="SelectedProductIds" value="@product.Id" />
+		<label class="form-check-label">@product.Name</label>
+	</div>
+}

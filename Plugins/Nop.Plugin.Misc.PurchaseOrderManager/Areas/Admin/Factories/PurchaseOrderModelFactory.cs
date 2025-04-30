@@ -7,101 +7,92 @@ using Nop.Services.Customers;
 using Nop.Web.Framework.Models.Extensions;
 using Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Domain;
 
-namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories;
-public class PurchaseOrderModelFactory : IPurchaseOrderModelFactory
+namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories
 {
-    private readonly IPurchaseOrderService _purchaseOrderService;
-    private readonly ISupplierService _supplierService;
-    private readonly ICustomerService _customerService;
-    private readonly IStaticCacheManager _staticCacheManager;
-
-    public PurchaseOrderModelFactory(
-        IPurchaseOrderService purchaseOrderService,
-        ISupplierService supplierService,
-        ICustomerService customerService,
-        IStaticCacheManager staticCacheManager)
+    public class PurchaseOrderModelFactory : IPurchaseOrderModelFactory
     {
-        _purchaseOrderService = purchaseOrderService;
-        _supplierService = supplierService;
-        _customerService = customerService;
-        _staticCacheManager = staticCacheManager;
-    }
+        private readonly IPurchaseOrderService _purchaseOrderService;
+        private readonly ISupplierService _supplierService;
+        private readonly ICustomerService _customerService;
+        private readonly IStaticCacheManager _staticCacheManager;
 
-    public async Task<PurchaseOrderSearchModel> PreparePurchaseOrderSearchModelAsync(PurchaseOrderSearchModel searchModel)
-    {
-        if (searchModel == null)
-            searchModel = new PurchaseOrderSearchModel();
-
-        // Populate AvailableSuppliers
-        var suppliers = await _supplierService.GetAllSuppliersAsync();
-        foreach (var supplier in suppliers)
+        public PurchaseOrderModelFactory(
+            IPurchaseOrderService purchaseOrderService,
+            ISupplierService supplierService,
+            ICustomerService customerService,
+            IStaticCacheManager staticCacheManager)
         {
-            searchModel.AvailableSuppliers.Add(new SelectListItem
-            {
-                Text = supplier.Name,
-                Value = supplier.Id.ToString()
-            });
+            _purchaseOrderService = purchaseOrderService;
+            _supplierService = supplierService;
+            _customerService = customerService;
+            _staticCacheManager = staticCacheManager;
         }
 
-        searchModel.SetGridPageSize();
-        return searchModel;
-    }
-
-    public async Task<PurchaseOrderListModel> PreparePurchaseOrderListModelAsync(PurchaseOrderSearchModel searchModel)
-    {
-        var purchaseOrders = await _purchaseOrderService.SearchPurchaseOrdersAsync(
-            supplierId: searchModel.SupplierId,
-            startDate: searchModel.StartDate,
-            endDate: searchModel.EndDate,
-            pageIndex: searchModel.Page - 1,
-            pageSize: searchModel.PageSize);
-
-        var model = await new PurchaseOrderListModel().PrepareToGridAsync(searchModel, purchaseOrders, () =>
+        public async Task<PurchaseOrderSearchModel> PreparePurchaseOrderSearchModelAsync(PurchaseOrderSearchModel searchModel)
         {
-            return purchaseOrders.SelectAwait(async po =>
-            {
-                var supplier = await _supplierService.GetByIdAsync(po.SupplierId);
-                var createdBy = await _customerService.GetCustomerByIdAsync(po.CreatedById);
+            if (searchModel == null)
+                searchModel = new PurchaseOrderSearchModel();
 
-                return new PurchaseOrderModel
+            // Populate AvailableSuppliers
+            var suppliers = await _supplierService.GetAllSuppliersAsync();
+            foreach (var supplier in suppliers)
+            {
+                searchModel.AvailableSuppliers.Add(new SelectListItem
                 {
-                    Id = po.Id,
-                    SupplierId = po.SupplierId,
-                    SupplierName = supplier?.Name ?? "N/A",
-                    CreatedOnUtc = po.CreatedOnUtc,
-                    CreatedBy = createdBy?.Email ?? "System",
-                    TotalAmount = po.TotalAmount
-                };
-            });
-        });
-
-        return model;
-    }
-
-    public async Task<PurchaseOrderModel> PreparePurchaseOrderModelAsync(PurchaseOrderModel model, PurchaseOrder purchaseOrder)
-    {
-        if (purchaseOrder != null)
-        {
-            model ??= new PurchaseOrderModel();
-            model.Id = purchaseOrder.Id;
-            model.SupplierId = purchaseOrder.SupplierId;
-            model.CreatedOnUtc = purchaseOrder.CreatedOnUtc;
-            model.TotalAmount = purchaseOrder.TotalAmount;
-            model.CreatedById = purchaseOrder.CreatedById;
-
-            var supplier = await _supplierService.GetByIdAsync(purchaseOrder.SupplierId);
-            if (supplier != null)
-            {
-                model.SupplierName = supplier.Name;
+                    Text = supplier.Name,
+                    Value = supplier.Id.ToString()
+                });
             }
 
-            var createdBy = await _customerService.GetCustomerByIdAsync(purchaseOrder.CreatedById);
-            if (createdBy != null)
-            {
-                model.CreatedBy = createdBy.Email;
-            }
+            searchModel.SetGridPageSize();
+            return searchModel;
         }
 
-        return model;
+        public async Task<PurchaseOrderListModel> PreparePurchaseOrderListModelAsync(PurchaseOrderSearchModel searchModel)
+        {
+            var purchaseOrders = await _purchaseOrderService.SearchPurchaseOrdersAsync(
+                supplierId: searchModel.SupplierId,
+                startDate: searchModel.StartDate,
+                endDate: searchModel.EndDate,
+                pageIndex: searchModel.Page - 1,
+                pageSize: searchModel.PageSize);
+
+            var model = await new PurchaseOrderListModel().PrepareToGridAsync(searchModel, purchaseOrders, () =>
+            {
+                return purchaseOrders.SelectAwait(async po =>
+                {
+                    var supplier = await _supplierService.GetByIdAsync(po.SupplierId);
+                    var createdBy = await _customerService.GetCustomerByIdAsync(po.CreatedById);
+
+                    return new PurchaseOrderModel
+                    {
+                        Id = po.Id,
+                        SupplierId = po.SupplierId,
+                        SupplierName = supplier?.Name ?? "N/A",
+                        CreatedOnUtc = po.CreatedOnUtc,
+                        CreatedBy = createdBy?.Email ?? "System",
+                        TotalAmount = po.TotalAmount
+                    };
+                });
+            });
+
+            return model;
+        }
+
+        
+
+        public async Task<PurchaseOrderModel> PreparePurchaseOrderModelAsync(PurchaseOrderModel model )
+        {
+            if(model == null ) model = new PurchaseOrderModel();
+
+            var suppliers = await _supplierService.GetAllSuppliersAsync(); // or your service method
+            model.AvailableSuppliers = suppliers.Select(s => new SelectListItem
+            {
+                Text = s.Name,
+                Value = s.Id.ToString()
+            }).ToList();
+
+            return model;
+        }
     }
 }

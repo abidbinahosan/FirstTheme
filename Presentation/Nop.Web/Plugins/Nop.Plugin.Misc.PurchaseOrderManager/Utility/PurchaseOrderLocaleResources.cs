@@ -64,6 +64,9 @@ public static class PurchaseOrderLocaleResources
         ["Admin.PurchaseOrders.RemoveProduct"] = "Remove",
         ["Admin.PurchaseOrders.Save"] = "Save Order",
         ["Admin.PurchaseOrders.Cancel"] = "Cancel",
+        ["Admin.PurchaseOrders.Create"] = "Create new purchase order",
+        ["Admin.PurchaseOrders.Fields.Products"] = "Product list for selected supplier",
+        ["Admin.PurchaseOrders.SelectSupplierPrompt"] = "Select a supplier",
 
         // Widget/Help Text
         ["Admin.PurchaseOrder.Widget"] = "Purchase Orders",

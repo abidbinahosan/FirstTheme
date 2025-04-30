@@ -1,0 +1,90 @@
+﻿@model Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models.PurchaseOrderModel
+
+@{
+	Layout = null; // When this is rendered inside a modal, use null layout to avoid full page layout
+}
+
+@using (Html.BeginForm("Create", "PurchaseOrderManager", FormMethod.Post, new { id = "create-purchase-order-form", @class = "form-horizontal" }))
+{
+	@Html.AntiForgeryToken()
+
+	<div class="modal-header">
+		<h5 class="modal-title">@T("Admin.PurchaseOrders.CreateNew")</h5>
+		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+
+	<div class="modal-body">
+		<!-- Supplier Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="SupplierId" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="SupplierId" />
+				<span asp-validation-for="SupplierId" class="text-danger"></span>
+			</div>
+		</div>
+
+		<!-- Supplier Name Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="SupplierName" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="SupplierName" />
+				<span asp-validation-for="SupplierName" class="text-danger"></span>
+			</div>
+		</div>
+
+		<!-- Created Date Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="CreatedOnUtc" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="CreatedOnUtc" asp-format="{0:yyyy-MM-ddTHH:mm}" />
+				<span asp-validation-for="CreatedOnUtc" class="text-danger"></span>
+			</div>
+		</div>
+
+		<!-- Total Amount Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="TotalAmount" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="TotalAmount" />
+				<span asp-validation-for="TotalAmount" class="text-danger"></span>
+			</div>
+		</div>
+
+		<!-- Created By ID Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="CreatedById" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="CreatedById" />
+				<span asp-validation-for="CreatedById" class="text-danger"></span>
+			</div>
+		</div>
+
+		<!-- Created By Field -->
+		<div class="form-group row">
+			<div class="col-md-3">
+				<nop-label asp-for="CreatedBy" />
+			</div>
+			<div class="col-md-9">
+				<nop-editor asp-for="CreatedBy" />
+				<span asp-validation-for="CreatedBy" class="text-danger"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">@T("Admin.Common.Close")</button>
+		<button type="submit" class="btn btn-primary">@T("Admin.Common.Save")</button>
+	</div>
+}

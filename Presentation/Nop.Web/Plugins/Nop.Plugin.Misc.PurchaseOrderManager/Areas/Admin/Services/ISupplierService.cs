@@ -1,5 +1,7 @@
 ﻿using Nop.Core;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Domain;
+using Nop.Core.Domain.Catalog; // For accessing the Product class
+
 
 namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Services
 {
@@ -13,5 +15,6 @@ namespace Nop.Plugin.Misc.Supplier.Areas.Admin.Services
         Task<IPagedList<SupplierEntity>> GetAllAsync(string searchName, string searchEmail, int pageIndex, int pageSize);
         Task InsertOrUpdateProductSupplierMappingAsync(int productId, int supplierId);
         Task<int> GetProductSupplierIdAsync(int productId);
+        Task<IList<Product>> GetProductsBySupplierAsync(int supplierId);
     }
 }
