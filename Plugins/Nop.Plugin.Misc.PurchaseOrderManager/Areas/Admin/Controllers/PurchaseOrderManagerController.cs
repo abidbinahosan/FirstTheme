@@ -8,6 +8,9 @@ using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 {
@@ -57,18 +60,56 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PurchaseOrderModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // Handle saving the purchase order (you should add actual saving logic here)
-                // E.g., create purchase order in the database, send notifications, etc.
-
-                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.CreatedSuccessfully"));
-                return RedirectToAction("Index");
+                // If validation fails, re-populate available suppliers
+                model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(model);
+                return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
             }
 
-            // If validation fails, re-populate available suppliers and return the model
-           
-            return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
+            // Verify at least one product is selected
+            if (model.SelectedProductIds == null || !model.SelectedProductIds.Any())
+            {
+                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.SelectAtLeastOneProduct"));
+                model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(model);
+                return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
+            }
+
+            try
+            {
+                // Handle saving the purchase order
+                // This is where you would implement your purchase order creation logic
+                // Example:
+                // await _purchaseOrderService.CreatePurchaseOrderAsync(model);
+
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.CreatedSuccessfully"));
+
+                // For AJAX requests, return JSON result
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new { success = true });
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (System.Exception ex)
+            {
+                // Log the exception
+
+                // For AJAX requests, return error
+                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        errorMessage = await _localizationService.GetResourceAsync("Admin.PurchaseOrders.Error")
+                    });
+                }
+
+                _notificationService.ErrorNotification(ex.Message);
+                model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(model);
+                return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
+            }
         }
 
         [HttpGet]
@@ -76,16 +117,21 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
         {
             // Ensure that the supplier ID is valid
             if (supplierId == 0)
-                return Json(new List<SelectListItem>());
+                return Json(new List<object>());
 
             // Get products for the selected supplier
-            var products = await _supplierService.GetProductsBySupplierAsync(supplierId); // Make sure to create this method in your service
+            var products = await _supplierService.GetProductsBySupplierAsync(supplierId);
 
-            // Prepare the product list for the dropdown
-            var productList = products.Select(p => new SelectListItem
+            // Map products to an enhanced model that includes additional fields needed for the DataTable
+            var productList = products.Select(p => new
             {
-                Text = p.Name,
-                Value = p.Id.ToString()
+                Value = p.Id.ToString(),     // Product ID
+                Text = p.Name,               // Product Name
+                Sku = p.Sku,                 // Product SKU
+                Price = p.Price,             // Product Price
+                StockQuantity = p.StockQuantity, // Current Stock
+                Published = p.Published,     // Is Published
+                MinimumStockQuantity = p.MinStockQuantity // Optional: Minimum stock level
             }).ToList();
 
             return Json(productList);

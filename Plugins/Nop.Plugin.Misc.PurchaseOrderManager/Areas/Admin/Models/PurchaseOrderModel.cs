@@ -2,6 +2,8 @@
 using Nop.Core;
 using Nop.Web.Framework.Models;
 using Nop.Web.Framework.Mvc.ModelBinding;
+using System;
+using System.Collections.Generic;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models
 {
@@ -10,10 +12,13 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models
         public PurchaseOrderModel()
         {
             AvailableSuppliers = new List<SelectListItem>();
+            SelectedProductIds = new List<int>();
+            Quantities = new Dictionary<int, int>();
         }
 
         [NopResourceDisplayName("Admin.PurchaseOrders.Fields.Supplier")]
         public int SupplierId { get; set; }
+
         public string SupplierName { get; set; }
 
         [NopResourceDisplayName("Admin.PurchaseOrders.Fields.CreatedOnUtc")]
@@ -24,8 +29,19 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models
 
         [NopResourceDisplayName("Admin.PurchaseOrders.Fields.CreatedBy")]
         public int CreatedById { get; set; }
+
         public string CreatedBy { get; set; }
 
-        public IList<SelectListItem> AvailableSuppliers { get; set; } = new List<SelectListItem>();
+        public IList<SelectListItem> AvailableSuppliers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected product IDs for the purchase order
+        /// </summary>
+        public IList<int> SelectedProductIds { get; set; }
+
+        /// <summary>
+        /// Gets or sets the product quantities (product ID -> quantity)
+        /// </summary>
+        public IDictionary<int, int> Quantities { get; set; }
     }
 }

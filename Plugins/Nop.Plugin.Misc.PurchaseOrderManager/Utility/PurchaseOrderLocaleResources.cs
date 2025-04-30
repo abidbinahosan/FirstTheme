@@ -67,6 +67,9 @@ public static class PurchaseOrderLocaleResources
         ["Admin.PurchaseOrders.Create"] = "Create new purchase order",
         ["Admin.PurchaseOrders.Fields.Products"] = "Product list for selected supplier",
         ["Admin.PurchaseOrders.SelectSupplierPrompt"] = "Select a supplier",
+        ["Admin.Pager.PageSizeDropDownText"] = "Product list for selected supplier",
+        ["Admin.Pager.Previous"] = "Previous",
+        ["Admin.Pager.Next"] = "Next",
 
         // Widget/Help Text
         ["Admin.PurchaseOrder.Widget"] = "Purchase Orders",
