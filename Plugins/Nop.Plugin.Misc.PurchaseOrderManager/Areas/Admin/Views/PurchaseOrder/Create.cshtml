@@ -1,164 +1,176 @@
-@model Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models.PurchaseOrderModel
-<form asp-controller="PurchaseOrderManager" asp-action="Create" method="post" id="create-form">
-	<div class="modal-header">
-		<h5 class="modal-title">@T("Admin.PurchaseOrders.Create")</h5>
-		<button type="button" class="close" data-dismiss="modal">&times;</button>
-	</div>
-	<div class="modal-body">
-		<!-- Supplier Dropdown -->
-		<div class="form-group">
-			<nop-label asp-for="SupplierId" />
-			<select asp-for="SupplierId" asp-items="Model.AvailableSuppliers" class="form-control" id="SupplierId">
-				<option value="">@T("Admin.PurchaseOrders.SelectSupplierPrompt")</option>
-			</select>
-		</div>
+﻿@model Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models.PurchaseOrderModel
+@{
+	Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+	ViewBag.PageTitle = T("Admin.PurchaseOrders.Create").Text;
+}
 
-		<!-- Product List Table -->
-		<div id="product-list-container" class="form-group" style="display:none;">
-			<div class="card">
-				<div class="card-body">
-					<div id="product-grid-container">
-						<table class="table table-bordered table-hover table-striped" id="product-list-table">
-							<thead>
-								<tr>
-									<th style="width: 50px;">
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" id="select-all-products" class="custom-control-input">
-											<label class="custom-control-label" for="select-all-products"></label>
-										</div>
-									</th>
-									<th>@T("Admin.Catalog.Products.Fields.Name")</th>
-								</tr>
-							</thead>
-							<tbody id="product-list-body">
-								<!-- Product rows will be inserted here -->
-							</tbody>
-						</table>
+<form asp-controller="PurchaseOrderManager" asp-action="Create" method="post" id="create-form">
+	<div class="content-header clearfix">
+		<h1 class="float-left">@T("Admin.PurchaseOrders.Create")</h1>
+	</div>
+
+	<div class="content">
+		<div class="form-horizontal">
+			<!-- Supplier Dropdown with inline label (without search) -->
+			<div class="form-group row align-items-center">
+				<label asp-for="SupplierId" class="col-form-label col-md-2 text-right">@T("Admin.PurchaseOrders.SelectSupplierPrompt")</label>
+				<div class="col-md-6">
+					<select asp-for="SupplierId" asp-items="Model.AvailableSuppliers" class="form-control" id="SupplierId">
+						<option value="">@T("Admin.PurchaseOrders.SelectSupplierPrompt")</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- Add Product Button -->
+			<div class="form-group row">
+				<div class="col-md-2 offset-md-2">
+					<button type="button" id="add-product-btn" class="btn btn-primary">
+						<i class="fas fa-plus"></i> @T("Admin.PurchaseOrders.AddProduct")
+					</button>
+				</div>
+			</div>
+
+			<!-- Selected Products Panel -->
+			<div id="selected-products-container" class="form-group" style="display:none;">
+				<div class="card">
+					<div class="card-header">
+						<h5>@T("Admin.PurchaseOrders.SelectedProducts")</h5>
+					</div>
+					<div class="card-body">
+						<div class="table-responsive">
+							<table class="table table-bordered table-hover" id="selected-products-table">
+								<thead>
+									<tr>
+										<th>@T("Admin.Catalog.Products.Fields.Name")</th>
+										<th>@T("Admin.Catalog.Products.Fields.Sku")</th>
+										<th class="text-center">@T("Admin.Common.Remove")</th>
+									</tr>
+								</thead>
+								<tbody id="selected-products-body">
+									<!-- Dynamically populated -->
+								</tbody>
+							</table>
+						</div>
+						<div id="no-products-selected" class="alert alert-info">
+							@T("Admin.PurchaseOrders.NoProductsSelected")
+						</div>
 					</div>
 				</div>
 			</div>
+
+			<!-- Hidden inputs for selected products -->
+			<div id="selected-products-inputs">
+				<!-- Will be dynamically populated with hidden inputs -->
+			</div>
 		</div>
-	</div>
-	<div class="modal-footer">
-		<button type="submit" class="btn btn-primary">@T("Admin.Common.Save")</button>
-		<button type="button" class="btn btn-secondary" data-dismiss="modal">@T("Admin.Common.Cancel")</button>
 	</div>
 </form>
 
-<script>
-	$(document).ready(function () {
-		// Handle supplier change
-		$(document).on('change', '#SupplierId', function () {
-			const supplierId = $(this).val();
-			if (!supplierId) {
-				$('#product-list-container').hide();
-				if ($.fn.DataTable.isDataTable('#product-list-table')) {
-					$('#product-list-table').DataTable().destroy();
+@section Scripts {
+	<script>
+		// Store selected products
+		var selectedProducts = [];
+
+		$(document).ready(function () {
+			// Initial UI state
+			updateSelectedProductsUI();
+
+			// Supplier selection change
+			$('#SupplierId').change(function () {
+				const supplierId = $(this).val();
+				if (!supplierId) {
+					$('#selected-products-container').hide();
+					selectedProducts = [];
+					updateSelectedProductsUI();
+				} else {
+					$('#add-product-btn').show();
 				}
-				return;
-			}
+			});
 
-			// Show loading indicator
-			$('#product-list-container').show();
-			$('#product-list-body').html('<tr><td colspan="2" class="text-center">Loading...</td></tr>');
+			// Open product selection popup (using Add Product button)
+			$('#add-product-btn').click(function() {
+				const supplierId = $('#SupplierId').val();
+				if (!supplierId) return;
 
-			// Fetch products for the selected supplier
-			$.ajax({
-				url: '@Url.Action("GetProductsBySupplier", "PurchaseOrderManager")',
-				type: 'GET',
-				data: { supplierId: supplierId },
-				success: function (data) {
-					if ($.fn.DataTable.isDataTable('#product-list-table')) {
-						$('#product-list-table').DataTable().destroy();
-					}
+				// Calculate centered position for popup
+				const width = 800;
+				const height = 600;
+				const left = (window.screen.width / 2) - (width / 2);
+				const top = (window.screen.height / 2) - (height / 2);
 
-					// Initialize the DataTable using nopCommerce standard approach
-					$('#product-list-table').DataTable({
-						data: data,
-						columns: [
-							{
-								data: 'Value',
-								render: function (data) {
-									return '<div class="custom-control custom-checkbox">' +
-										'<input type="checkbox" class="custom-control-input product-checkbox" name="SelectedProductIds" id="product_' + data + '" value="' + data + '">' +
-										'<label class="custom-control-label" for="product_' + data + '"></label>' +
-										'</div>';
-								},
-								orderable: false,
-								className: 'text-center'
-							},
-							{
-								data: 'Text',
-								render: function(data, type, row) {
-									return '<span>' + data + '</span>';
-								}
-							}
-						],
-						processing: true,
-						serverSide: false,
-						info: true,
-						paging: true,
-						ordering: true,
-						searching: false,
-						lengthChange: true,
-						pageLength: 10,
-						lengthMenu: [10, 25, 50, 100],
-						language: {
-							info: 'Page _PAGE_ of _PAGES_',
-							paginate: {
-								previous: '@T("Admin.Pager.Previous")',  // Removed arrow for Previous
-								next: '@T("Admin.Pager.Next")'          // Removed arrow for Next
-							},
-							lengthMenu: '@T("Admin.Pager.PageSizeDropDownText")',
-							emptyTable: '@T("Admin.Common.NoData")',
-							processing: '@T("Admin.Common.Processing")'
-						},
-						// Custom DOM Layout for the table pagination
-						dom: '<"row"<"col-md-12"<"row"<"col-md-3"i><"col-md-3"l><"col-md-6"f>>>><"table-responsive"rt><"row"<"col-md-12"<"row"<"col-md-6"i><"col-md-6"p>>>>'
-					});
+				// Open popup window with product selection
+				const popupWindow = window.open(
+					'@Url.Action("ProductSelectionPopup", "PurchaseOrderManager")?handler=ProductSelectionPopup&supplierId=' + supplierId,
+					'ProductSelectionPopup',
+					'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left +
+					',resizable=yes,scrollbars=yes,toolbar=no,location=no,directories=no,status=no,menubar=no'
+				);
 
-					$('#product-list-container').show();
-				},
-				error: function() {
-					alert('@T("Admin.Common.Error")');
-					$('#product-list-container').hide();
+				// Set reference to parent window for communication
+				popupWindow.opener = window;
+				popupWindow.parentSelectedProducts = selectedProducts;
+
+				return false;
+			});
+
+			// Form validation
+			$('#create-form').submit(function (e) {
+				if (selectedProducts.length === 0) {
+					alert('@T("Admin.PurchaseOrders.SelectAtLeastOneProduct")');
+					e.preventDefault();
+					return false;
 				}
+				return true;
 			});
 		});
 
-		// Handle "Select All" checkbox
-		$(document).on('change', '#select-all-products', function() {
-			const isChecked = $(this).prop('checked');
-			$('.product-checkbox').prop('checked', isChecked);
-		});
+		// Function to receive products from popup
+		function receiveSelectedProducts(products) {
+			selectedProducts = products;
+			updateSelectedProductsUI();
+			$('#selected-products-container').show();
+		}
 
-		// Form submission
-		$('#create-form').submit(function(e) {
-			e.preventDefault();
+		// Remove a product from selection
+		function removeProduct(productId) {
+			selectedProducts = selectedProducts.filter(p => p.id !== productId);
+			updateSelectedProductsUI();
+		}
 
-			// Check if at least one product is selected
-			if ($('.product-checkbox:checked').length === 0) {
-				alert('@T("Admin.PurchaseOrders.SelectAtLeastOneProduct")');
-				return;
+		// Update the UI to reflect selected products
+		function updateSelectedProductsUI() {
+			// Clear existing inputs
+			$('#selected-products-inputs').empty();
+
+			// Update the table
+			if (selectedProducts.length > 0) {
+				$('#no-products-selected').hide();
+
+				var html = '';
+				selectedProducts.forEach(function(product) {
+					html += '<tr>' +
+						'<td>' + product.name + '</td>' +
+						'<td>' + product.sku + '</td>' +
+						'<td class="text-center">' +
+						'<button type="button" class="btn btn-sm btn-danger" onclick="removeProduct(' + product.id + ')">' +
+						'<i class="fas fa-times"></i>' +
+						'</button>' +
+						'</td>' +
+						'</tr>';
+
+					// Add hidden input for each product
+					$('#selected-products-inputs').append(
+						'<input type="hidden" name="SelectedProductIds" value="' + product.id + '" />'
+					);
+				});
+
+				$('#selected-products-body').html(html);
+				$('#selected-products-table').show();
+			} else {
+				$('#no-products-selected').show();
+				$('#selected-products-table').hide();
+				$('#selected-products-body').empty();
 			}
-
-			var form = $(this);
-			$.ajax({
-				url: form.attr('action'),
-				type: 'POST',
-				data: form.serialize(),
-				success: function(response) {
-					if (response.success) {
-						$('#createPurchaseOrderModal').modal('hide');
-						$('#purchase-orders-grid').DataTable().ajax.reload();
-					} else {
-						alert(response.errorMessage || 'Something went wrong!');
-					}
-				},
-				error: function() {
-					alert('@T("Admin.Common.Error")');
-				}
-			});
-		});
-	});
-</script>
+		}
+	</script>
+}

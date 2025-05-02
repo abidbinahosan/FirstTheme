@@ -13,9 +13,9 @@
 <div class="content-header clearfix">
 	<h1 class="float-left">@T("Admin.PurchaseOrders")</h1>
 	<div class="float-right">
-		<button class="btn btn-primary" id="open-create-modal">
+		<a class="btn btn-primary" href="@Url.Action("Create", "PurchaseOrderManager")">
 			<i class="fas fa-plus-square"></i> @T("Admin.Common.AddNew")
-		</button>
+		</a>
 	</div>
 </div>
 
@@ -135,26 +135,8 @@
 	</div>
 </section>
 
-<!-- Modal Placeholder -->
-<div class="modal fade" id="createPurchaseOrderModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content" id="create-modal-content">
-			<!-- Dynamic content loaded from Create.cshtml -->
-		</div>
-	</div>
-</div>
-
 <script>
 	function renderColumnTotalAmount(data, type, row, meta) {
 		return '$' + parseFloat(data).toFixed(2);
 	}
-
-	$(document).ready(function () {
-		$('#open-create-modal').on('click', function () {
-			$.get('@Url.Action("Create", "PurchaseOrderManager")', function (html) {
-				$('#create-modal-content').html(html);
-				$('#createPurchaseOrderModal').modal('show');
-			});
-		});
-	});
 </script>

@@ -53,8 +53,37 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
+            // Check if this is a popup request for product selection
+            if (Request.Query.ContainsKey("handler") && Request.Query["handler"] == "ProductSelectionPopup")
+            {
+                return await ProductSelectionPopup(
+                    int.Parse(Request.Query["supplierId"]));
+            }
+
             var model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(new PurchaseOrderModel());
             return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProductSelectionPopup(int supplierId)
+        {
+            if (supplierId <= 0)
+                return BadRequest();
+
+            var suppliers = await _supplierService.GetAllSuppliersAsync();
+            var supplier = suppliers.FirstOrDefault(s => s.Id == supplierId);
+            if (supplier == null)
+                return NotFound();
+
+            var model = new AddSupplierProductSearchModel
+            {
+                SupplierId = supplierId,
+                AvailablePageSizes = "10,15,20,50"
+            };
+
+            model.SetGridPageSize(); // ✅ Properly sets the PageSize
+
+            return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/ProductSelectionPopup.cshtml", model);
         }
 
         [HttpPost]
@@ -147,6 +176,49 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             }).ToList();
 
             return Json(items);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SupplierProductAddPopupList(DataTablesParam parameters, int supplierId)
+        {
+            if (supplierId <= 0)
+                return Json(new DataTablesResponse { Data = new List<PurchaseOrderProductModel>() });
+
+            // Get products for the selected supplier
+            var products = await _supplierService.GetProductsBySupplierAsync(supplierId);
+
+            // Apply search if provided
+            var searchValue = parameters.Search?.Value;
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                products = products.Where(p => 
+                    p.Name.Contains(searchValue, System.StringComparison.InvariantCultureIgnoreCase) ||
+                    p.Sku.Contains(searchValue, System.StringComparison.InvariantCultureIgnoreCase)
+                ).ToList();
+            }
+
+            // Get total count before paging
+            var totalCount = products.Count;
+
+            // Apply paging
+            var pagedProducts = products
+                .Skip(parameters.Start)
+                .Take(parameters.Length)
+                .Select(p => new PurchaseOrderProductModel
+                {
+                    ProductId = p.Id,
+                    ProductName = p.Name,
+                    Published = p.Published
+                })
+                .ToList();
+
+            return Json(new DataTablesResponse
+            {
+                Draw = parameters.Draw,
+                RecordsTotal = totalCount,
+                RecordsFiltered = totalCount,
+                Data = pagedProducts
+            });
         }
     }
 }

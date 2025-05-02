@@ -56,6 +56,12 @@
     <Compile Update="Areas\Admin\Migration\SchemaMigration.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Update="Areas\Admin\Models\AddSupplierProductSearchModel.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Update="Areas\Admin\Models\ProductSelectionModel.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Update="Areas\Admin\Models\PurchaseOrderListModel.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
@@ -91,6 +97,9 @@
       <Content Include="Areas\Admin\Views\PurchaseOrder\Create.cshtml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Update="Areas\Admin\Views\PurchaseOrder\ProductSelectionPopup.cshtml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     <None Update="Areas\Admin\Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

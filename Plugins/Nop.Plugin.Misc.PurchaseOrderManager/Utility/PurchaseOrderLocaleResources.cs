@@ -18,6 +18,7 @@ public static class PurchaseOrderLocaleResources
         ["Admin.PurchaseOrder.Updated"] = "Purchase order updated successfully",
         ["Admin.PurchaseOrder.Deleted"] = "Purchase order deleted successfully",
         ["Admin.PurchaseOrders.EditDetails"] = "Edit Purchase Order Details",
+        ["Admin.PurchaseOrders.Supplier"] = "Suppliers",
 
         // Validation Messages
         ["Admin.PurchaseOrders.Fields.Supplier.Required"] = "Supplier is required",
@@ -67,9 +68,12 @@ public static class PurchaseOrderLocaleResources
         ["Admin.PurchaseOrders.Create"] = "Create new purchase order",
         ["Admin.PurchaseOrders.Fields.Products"] = "Product list for selected supplier",
         ["Admin.PurchaseOrders.SelectSupplierPrompt"] = "Select a supplier",
-        ["Admin.Pager.PageSizeDropDownText"] = "Product list for selected supplier",
+        ["Admin.Pager.PageSizeDropDownText"] = "Items per page",
         ["Admin.Pager.Previous"] = "Previous",
         ["Admin.Pager.Next"] = "Next",
+        ["Admin.Pager.Currentpage"] = "Current Page",
+        ["Admin.Pager.First"] = "First",
+        ["Admin.Pager.Last"] = "Last",
 
         // Widget/Help Text
         ["Admin.PurchaseOrder.Widget"] = "Purchase Orders",

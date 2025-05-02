@@ -2,7 +2,7 @@
   "Group": "Misc",
   "FriendlyName": "Purchase Order Manager",
   "SystemName": "Misc.PurchaseOrderManager",
-  "Version": "4.80.6",
+  "Version": "4.80.9",
   "SupportedVersions": [ "4.80" ],
   "Author": "Abid",
   "DisplayOrder": 1,

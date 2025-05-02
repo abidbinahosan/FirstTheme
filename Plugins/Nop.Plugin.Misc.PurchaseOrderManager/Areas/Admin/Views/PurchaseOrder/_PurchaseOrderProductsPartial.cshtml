@@ -1,0 +1,25 @@
+@model IList<Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models.PurchaseOrderProductModel>
+
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>@T("Admin.PurchaseOrders.Products.Fields.Name")</th>
+			<th>@T("Admin.PurchaseOrders.Products.Fields.Sku")</th>
+			<th>@T("Admin.PurchaseOrders.Products.Fields.Price")</th>
+			<th>@T("Admin.PurchaseOrders.Products.Fields.OrderQuantity")</th>
+			<th>@T("Admin.PurchaseOrders.Products.Fields.Subtotal")</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var product in Model)
+		{
+			<tr>
+				<td>@product.ProductName</td>
+				<td>@product.Sku</td>
+				<td>@product.Price.ToString("C")</td>
+				<td>@product.OrderQuantity</td>
+				<td>@product.Subtotal.ToString("C")</td>
+			</tr>
+		}
+	</tbody>
+</table>
