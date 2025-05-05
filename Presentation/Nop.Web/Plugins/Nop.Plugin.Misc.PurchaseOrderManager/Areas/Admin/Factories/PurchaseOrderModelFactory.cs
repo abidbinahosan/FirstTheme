@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Nop.Core.Caching;
 using Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models;
-using Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Services;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Services;
 using Nop.Services.Customers;
 using Nop.Web.Framework.Models.Extensions;
-using Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Domain;
+using Nop.Plugin.Misc.PurchaseOrderManager.Domain;
+using Nop.Plugin.Misc.PurchaseOrderManager.Services;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories
 {

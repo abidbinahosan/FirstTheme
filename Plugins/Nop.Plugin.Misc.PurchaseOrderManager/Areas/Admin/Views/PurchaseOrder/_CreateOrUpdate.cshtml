@@ -1,7 +1,7 @@
 ﻿@model Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models.PurchaseOrderModel
 
 @{
-	Layout = null; // When this is rendered inside a modal, use null layout to avoid full page layout
+	Layout = null;
 }
 
 @using (Html.BeginForm("Create", "PurchaseOrderManager", FormMethod.Post, new { id = "create-purchase-order-form", @class = "form-horizontal" }))

@@ -8,9 +8,6 @@ using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 {
@@ -53,7 +50,6 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 
         public async Task<IActionResult> Create()
         {
-            // Check if this is a popup request for product selection
             if (Request.Query.ContainsKey("handler") && Request.Query["handler"] == "ProductSelectionPopup")
             {
                 return await ProductSelectionPopup(
@@ -81,7 +77,7 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
                 AvailablePageSizes = "10,15,20,50"
             };
 
-            model.SetGridPageSize(); // ✅ Properly sets the PageSize
+            model.SetGridPageSize();
 
             return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/ProductSelectionPopup.cshtml", model);
         }
@@ -91,12 +87,10 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // If validation fails, re-populate available suppliers
                 model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(model);
                 return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
             }
 
-            // Verify at least one product is selected
             if (model.SelectedProductIds == null || !model.SelectedProductIds.Any())
             {
                 _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.SelectAtLeastOneProduct"));
@@ -106,14 +100,8 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 
             try
             {
-                // Handle saving the purchase order
-                // This is where you would implement your purchase order creation logic
-                // Example:
-                // await _purchaseOrderService.CreatePurchaseOrderAsync(model);
-
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.CreatedSuccessfully"));
 
-                // For AJAX requests, return JSON result
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     return Json(new { success = true });
@@ -123,9 +111,6 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             }
             catch (System.Exception ex)
             {
-                // Log the exception
-
-                // For AJAX requests, return error
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
                     return Json(new
@@ -144,28 +129,24 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProductsBySupplier(int supplierId)
         {
-            // Ensure that the supplier ID is valid
             if (supplierId == 0)
                 return Json(new List<object>());
 
-            // Get products for the selected supplier
             var products = await _supplierService.GetProductsBySupplierAsync(supplierId);
 
-            // Map products to an enhanced model that includes additional fields needed for the DataTable
             var productList = products.Select(p => new
             {
-                Value = p.Id.ToString(),     // Product ID
-                Text = p.Name,               // Product Name
-                Sku = p.Sku,                 // Product SKU
-                Price = p.Price,             // Product Price
-                StockQuantity = p.StockQuantity, // Current Stock
-                Published = p.Published,     // Is Published
-                MinimumStockQuantity = p.MinStockQuantity // Optional: Minimum stock level
+                Value = p.Id.ToString(),     
+                Text = p.Name,               
+                Sku = p.Sku,                 
+                Price = p.Price,             
+                StockQuantity = p.StockQuantity, 
+                Published = p.Published,     
+                MinimumStockQuantity = p.MinStockQuantity 
             }).ToList();
 
             return Json(productList);
         }
-
         public async Task<IActionResult> GetAvailableSuppliers()
         {
             var suppliers = await _supplierService.GetAllSuppliersAsync();
@@ -184,10 +165,8 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             if (supplierId <= 0)
                 return Json(new DataTablesResponse { Data = new List<PurchaseOrderProductModel>() });
 
-            // Get products for the selected supplier
             var products = await _supplierService.GetProductsBySupplierAsync(supplierId);
 
-            // Apply search if provided
             var searchValue = parameters.Search?.Value;
             if (!string.IsNullOrEmpty(searchValue))
             {
@@ -197,10 +176,8 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
                 ).ToList();
             }
 
-            // Get total count before paging
             var totalCount = products.Count;
 
-            // Apply paging
             var pagedProducts = products
                 .Skip(parameters.Start)
                 .Take(parameters.Length)
