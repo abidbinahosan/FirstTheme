@@ -100,6 +100,9 @@
       <None Update="Areas\Admin\Views\PurchaseOrder\ProductSelectionPopup.cshtml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Areas\Admin\Views\PurchaseOrder\_CreateOrUpdate.cshtml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     <None Update="Areas\Admin\Views\_ViewImports.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

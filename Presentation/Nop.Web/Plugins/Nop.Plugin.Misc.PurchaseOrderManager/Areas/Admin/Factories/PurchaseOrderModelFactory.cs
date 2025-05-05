@@ -4,7 +4,6 @@ using Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models;
 using Nop.Plugin.Misc.Supplier.Areas.Admin.Services;
 using Nop.Services.Customers;
 using Nop.Web.Framework.Models.Extensions;
-using Nop.Plugin.Misc.PurchaseOrderManager.Domain;
 using Nop.Plugin.Misc.PurchaseOrderManager.Services;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories
@@ -27,13 +26,11 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories
             _customerService = customerService;
             _staticCacheManager = staticCacheManager;
         }
-
         public async Task<PurchaseOrderSearchModel> PreparePurchaseOrderSearchModelAsync(PurchaseOrderSearchModel searchModel)
         {
             if (searchModel == null)
                 searchModel = new PurchaseOrderSearchModel();
 
-            // Populate AvailableSuppliers
             var suppliers = await _supplierService.GetAllSuppliersAsync();
             foreach (var supplier in suppliers)
             {
@@ -79,13 +76,11 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Factories
             return model;
         }
 
-        
-
         public async Task<PurchaseOrderModel> PreparePurchaseOrderModelAsync(PurchaseOrderModel model )
         {
             if(model == null ) model = new PurchaseOrderModel();
 
-            var suppliers = await _supplierService.GetAllSuppliersAsync(); // or your service method
+            var suppliers = await _supplierService.GetAllSuppliersAsync();
             model.AvailableSuppliers = suppliers.Select(s => new SelectListItem
             {
                 Text = s.Name,

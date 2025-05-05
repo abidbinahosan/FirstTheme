@@ -48,6 +48,6 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Models
         /// </summary>
         [NopResourceDisplayName("Admin.PurchaseOrders.Products.Fields.Subtotal")]
         public decimal Subtotal { get; set; }
-        public bool Published { get; set; } // <-- Add this
+        public bool Published { get; set; }
     }
 }

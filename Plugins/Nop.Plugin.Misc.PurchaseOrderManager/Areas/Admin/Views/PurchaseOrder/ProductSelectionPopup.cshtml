@@ -18,22 +18,17 @@
 }
 else
 {
-	<form asp-controller="PurchaseOrderManager" asp-action="Create"
-		  asp-route-supplierId="@Context.Request.Query["supplierId"]"
-		  asp-route-btnId="@Context.Request.Query["btnId"]"
-		  asp-route-formId="@Context.Request.Query["formId"]">
+	<form asp-controller="PurchaseOrderManager" asp-action="ProductSelectionPopup" method="post" id="product-selection-form">
 		<input type="hidden" asp-for="SupplierId" />
 
 		<div class="content-header clearfix">
 			<h1 class="float-left">@T("Admin.Catalog.Products.RelatedProducts.AddNew")</h1>
-			<div class="float-right">&nbsp;</div>
 		</div>
 
 		<section class="content">
 			<div class="container-fluid">
 				<div class="form-horizontal">
 					<div class="cards-group">
-
 						<!-- Search Card -->
 						<div class="card card-default card-search card-popup">
 							<div class="card-body">
@@ -44,16 +39,15 @@ else
 												<nop-label asp-for="SearchProductName" />
 											</div>
 											<div class="col-sm-7">
-												<nop-editor asp-for="SearchProductName" />
+												<nop-editor asp-for="SearchProductName" id="SearchProductName" />
 											</div>
 										</div>
 									</div>
 								</div>
-
 								<div class="row">
 									<div class="col-sm-12">
 										<button type="button" id="search-products" class="btn btn-primary btn-search">
-											<i class="fas fa-magnifying-glass"></i>
+											<i class="fas fa-search"></i>
 											@T("Admin.Common.Search")
 										</button>
 									</div>
@@ -64,49 +58,57 @@ else
 						<!-- Table Card -->
 						<div class="card card-default">
 							<div class="card-body">
-								@await Html.PartialAsync("Table", new DataTablesModel
-								{
-									Name = "products-grid",
-									UrlRead = new DataUrl("SupplierProductAddPopupList", "PurchaseOrderManager", new RouteValueDictionary { { "supplierId", Model.SupplierId } }),
-									SearchButtonId = "search-products",
-									Length = Model.PageSize,
-									LengthMenu = Model.AvailablePageSizes,
-									Filters = new List<FilterParameter>
+								@{
+									var filters = new List<FilterParameter>();
+									if (Model.SearchProductName != null)
 									{
-										new FilterParameter(nameof(Model.SearchProductName))
-									},
-									ColumnCollection = new List<ColumnProperty>
-									{
-										new ColumnProperty(nameof(PurchaseOrderProductModel.ProductId))
-										{
-											IsMasterCheckBox = true,
-											Render = new RenderCheckBox("SelectedProductIds"),
-											ClassName = NopColumnClassDefaults.CenterAll,
-											Width = "50"
-										},
-										new ColumnProperty(nameof(PurchaseOrderProductModel.ProductName))
-										{
-											Title = T("Admin.Catalog.Products.Fields.Name").Text
-										},
-										new ColumnProperty(nameof(PurchaseOrderProductModel.Published))
-										{
-											Title = T("Admin.Catalog.Products.Fields.Published").Text,
-											Width = "100",
-											ClassName = NopColumnClassDefaults.CenterAll,
-											Render = new RenderBoolean()
-										}
+										filters.Add(new FilterParameter(nameof(Model.SearchProductName), nameof(Model.SearchProductName)));
 									}
-								})
+								}
+								@await Html.PartialAsync("Table", new DataTablesModel
+  {
+	  Name = "products-grid",
+	  UrlRead = new DataUrl("SupplierProductAddPopupList", "PurchaseOrderManager",
+							new RouteValueDictionary { ["supplierId"] = Model.SupplierId }),
+	  SearchButtonId = "search-products",
+	  Length = Model.PageSize,
+	  LengthMenu = Model.AvailablePageSizes,
+	  Filters = filters,
+	  ColumnCollection = new List<ColumnProperty>
+							{
+							new ColumnProperty(nameof(PurchaseOrderProductModel.ProductId))
+							{
+							IsMasterCheckBox = true,
+							Render = new RenderCheckBox("checkbox_products"),
+							ClassName = NopColumnClassDefaults.CenterAll,
+							Width = "50"
+							},
+							new ColumnProperty(nameof(PurchaseOrderProductModel.ProductName))
+							{
+							Title = T("Admin.Catalog.Products.Fields.Name").Text,
+							Render = new RenderCustom("renderProductName")
+							},
+							new ColumnProperty(nameof(PurchaseOrderProductModel.Sku))
+							{
+							Title = T("Admin.Catalog.Products.Fields.Sku").Text
+							},
+							new ColumnProperty(nameof(PurchaseOrderProductModel.Published))
+							{
+							Title = T("Admin.Catalog.Products.Fields.Published").Text,
+							Width = "100",
+							ClassName = NopColumnClassDefaults.CenterAll,
+							Render = new RenderBoolean()
+							}
+							}
+  })
 							</div>
-
 							<div class="card-footer">
-								<button type="submit" name="save" class="btn btn-primary">
-									<i class="far fa-floppy-disk"></i>
-									@T("Admin.Common.Save")
+								<button type="button" id="add-selected-products" class="btn btn-primary">
+									<i class="far fa-save"></i>
+									@T("Admin.Common.AddSelected")
 								</button>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -114,4 +116,44 @@ else
 	</form>
 }
 
-@NopHtml.GenerateInlineScripts(ResourceLocation.Footer)
+<script>
+	function renderProductName(data, type, row, meta) {
+		return '<a href="@Url.Content("~/Admin/Product/Edit/")' + row.ProductId + '">' + data + '</a>';
+	}
+
+	$(document).ready(function () {
+		// Initialize the search functionality
+		$('#search-products').click(function() {
+			var grid = $('#products-grid').DataTable();
+			grid.ajax.reload();
+			return false;
+		});
+
+		// Add selected products
+		$('#add-selected-products').click(function() {
+			var selectedProducts = [];
+			var grid = $('#products-grid').DataTable();
+
+			grid.$('input[name="checkbox_products"]:checked').each(function() {
+				var row = grid.row($(this).closest('tr'));
+				var rowData = row.data();
+
+				selectedProducts.push({
+					id: rowData.ProductId,
+					name: rowData.ProductName,
+					sku: rowData.Sku
+				});
+			});
+
+			if (selectedProducts.length === 0) {
+				alert('@T("Admin.PurchaseOrders.SelectAtLeastOneProduct")');
+				return;
+			}
+
+			if (window.opener && window.opener.receiveSelectedProducts) {
+				window.opener.receiveSelectedProducts(selectedProducts);
+				window.close();
+			}
+		});
+	});
+</script>
