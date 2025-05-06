@@ -48,6 +48,13 @@
 									</tr>
 								</thead>
 								<tbody id="selected-products-body"></tbody>
+								<!-- Total Line Cost Row -->
+								<tfoot id="total-line-cost-row">
+									<tr>
+										<td colspan="3" class="text-right"><strong>@T("Admin.PurchaseOrders.TotalLineCost"):</strong></td>
+										<td id="total-line-cost" colspan="2"></td>
+									</tr>
+								</tfoot>
 							</table>
 						</div>
 
@@ -158,6 +165,7 @@
 		function updateSelectedProductsUI() {
 			const tbody = $('#selected-products-body');
 			const inputs = $('#selected-products-inputs');
+			let totalLineCost = 0; // Initialize total line cost variable
 
 			tbody.empty();
 			inputs.empty();
@@ -165,6 +173,7 @@
 			selectedProducts.forEach(product => {
 				const isEditing = (editingProductId === product.id);
 				const linePrice = (product.price * product.quantity).toFixed(2);
+				totalLineCost += parseFloat(linePrice); // Add line price to total line cost
 
 				const row = $(`
 					<tr id="product-row-${product.id}">
@@ -175,16 +184,18 @@
 						<td>${isEditing
 							? `<input type="number" class="form-control qty-input" value="${product.quantity}" />`
 							: product.quantity}</td>
-						<td>${linePrice}</td>
+						<td>${isEditing
+							? `<input type="number" class="form-control line-price-input" value="${linePrice}" step="0.01" disabled />`
+							: linePrice}</td>
 						<td class="text-center">
 							${isEditing
 								? `<button type="button" class="btn btn-success btn-sm" onclick="updateProduct(${product.id})">
-										<i class="fas fa-save"></i> @T("Admin.Common.Update")
+										<i class="fas fa-check"></i> @T("Admin.Common.Update")
 								   </button>
 								   <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit(${product.id})">
 										<i class="fas fa-times"></i> @T("Admin.Common.Cancel")
 								   </button>`
-								: `<button type="button" class="btn btn-default btn-sm" onclick="editProduct(${product.id})">
+								: `<button type="button" class="btn btn-info btn-sm" onclick="editProduct(${product.id})">
 										<i class="fas fa-edit"></i> @T("Admin.Common.Edit")
 								   </button>`}
 						</td>
@@ -199,11 +210,14 @@
 				tbody.append(row);
 
 				inputs.append(`
-					<input type="hidden" name="SelectedProducts[${product.id}].ProductId" value="${product.id}" />
-					<input type="hidden" name="SelectedProducts[${product.id}].Price" value="${product.price}" />
-					<input type="hidden" name="SelectedProducts[${product.id}].Quantity" value="${product.quantity}" />
+					<input type="hidden" name="SelectedProductIds" value="${product.id}" />
+					<input type="hidden" name="Quantities[${product.id}]" value="${product.quantity}" />
 				`);
 			});
+
+			// Update the total line cost in the footer row
+			const totalLineCostContainer = $('#total-line-cost');
+			totalLineCostContainer.text(totalLineCost.toFixed(2));
 		}
 	</script>
 }

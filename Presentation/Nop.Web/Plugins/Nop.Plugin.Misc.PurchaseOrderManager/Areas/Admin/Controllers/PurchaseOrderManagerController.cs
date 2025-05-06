@@ -60,6 +60,7 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             return View("~/Plugins/Nop.Plugin.Misc.PurchaseOrderManager/Areas/Admin/Views/PurchaseOrder/Create.cshtml", model);
         }
 
+
         [HttpGet]
         public async Task<IActionResult> ProductSelectionPopup(int supplierId)
         {
@@ -101,6 +102,7 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             try
             {
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.PurchaseOrders.CreatedSuccessfully"));
+
 
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {

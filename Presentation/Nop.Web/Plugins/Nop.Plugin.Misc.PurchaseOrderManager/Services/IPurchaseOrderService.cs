@@ -12,5 +12,4 @@ public interface IPurchaseOrderService
         DateTime? endDate = null,
         int pageIndex = 0,
         int pageSize = int.MaxValue);
-
 }
