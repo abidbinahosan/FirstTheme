@@ -92,6 +92,11 @@ else
 							{
 							Title = T("Admin.Catalog.Products.Fields.Sku").Text
 							},
+							new ColumnProperty(nameof(PurchaseOrderProductModel.Price))
+							{
+							Title = T("Admin.Catalog.Products.Fields.Price").Text,
+							Width = "100"
+							},
 							new ColumnProperty(nameof(PurchaseOrderProductModel.Published))
 							{
 							Title = T("Admin.Catalog.Products.Fields.Published").Text,
@@ -124,7 +129,8 @@ else
 	$(document).ready(function () {
 		// Initialize the search functionality
 		$('#search-products').click(function() {
-			var grid = $('#products-grid').DataTable();
+			var grid = $('#products-grid').DataTable(
+				{"pageLength": 7});
 			grid.ajax.reload();
 			return false;
 		});
@@ -141,7 +147,8 @@ else
 				selectedProducts.push({
 					id: rowData.ProductId,
 					name: rowData.ProductName,
-					sku: rowData.Sku
+					sku: rowData.Sku,
+					price: parseFloat(rowData.Price) || 0
 				});
 			});
 

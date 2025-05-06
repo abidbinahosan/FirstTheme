@@ -8,6 +8,7 @@ using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
+using System.Linq;
 
 namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 {
@@ -52,8 +53,7 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
         {
             if (Request.Query.ContainsKey("handler") && Request.Query["handler"] == "ProductSelectionPopup")
             {
-                return await ProductSelectionPopup(
-                    int.Parse(Request.Query["supplierId"]));
+                return await ProductSelectionPopup(int.Parse(Request.Query["supplierId"]));
             }
 
             var model = await _purchaseOrderModelFactory.PreparePurchaseOrderModelAsync(new PurchaseOrderModel());
@@ -136,17 +136,18 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
 
             var productList = products.Select(p => new
             {
-                Value = p.Id.ToString(),     
-                Text = p.Name,               
-                Sku = p.Sku,                 
-                Price = p.Price,             
-                StockQuantity = p.StockQuantity, 
-                Published = p.Published,     
-                MinimumStockQuantity = p.MinStockQuantity 
+                Value = p.Id.ToString(),
+                Text = p.Name,
+                Sku = p.Sku,
+                Price = p.Price,
+                StockQuantity = p.StockQuantity,
+                Published = p.Published,
+                MinimumStockQuantity = p.MinStockQuantity
             }).ToList();
 
             return Json(productList);
         }
+
         public async Task<IActionResult> GetAvailableSuppliers()
         {
             var suppliers = await _supplierService.GetAllSuppliersAsync();
@@ -165,19 +166,23 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
             if (supplierId <= 0)
                 return Json(new DataTablesResponse { Data = new List<PurchaseOrderProductModel>() });
 
+            // Fetch all products for the supplier
             var products = await _supplierService.GetProductsBySupplierAsync(supplierId);
 
+            // Apply search filter if exists
             var searchValue = parameters.Search?.Value;
             if (!string.IsNullOrEmpty(searchValue))
             {
-                products = products.Where(p => 
+                products = products.Where(p =>
                     p.Name.Contains(searchValue, System.StringComparison.InvariantCultureIgnoreCase) ||
                     p.Sku.Contains(searchValue, System.StringComparison.InvariantCultureIgnoreCase)
                 ).ToList();
             }
 
-            var totalCount = products.Count;
+            // Total count of all products (before filtering)
+            var totalCount = products.Count(); // Directly using products.Count
 
+            // Paged products for the current page
             var pagedProducts = products
                 .Skip(parameters.Start)
                 .Take(parameters.Length)
@@ -185,17 +190,25 @@ namespace Nop.Plugin.Misc.PurchaseOrderManager.Areas.Admin.Controllers
                 {
                     ProductId = p.Id,
                     ProductName = p.Name,
+                    Sku = p.Sku,
+                    Price = p.Price, // Ensure price is included
                     Published = p.Published
                 })
                 .ToList();
 
+            // Return JSON response with DataTables format
             return Json(new DataTablesResponse
             {
                 Draw = parameters.Draw,
-                RecordsTotal = totalCount,
-                RecordsFiltered = totalCount,
+                RecordsTotal = totalCount,  // Total records (before filtering)
+                RecordsFiltered = products.Count(),  // Filtered records (after filtering)
                 Data = pagedProducts
             });
         }
+
+
+
+
+
     }
 }

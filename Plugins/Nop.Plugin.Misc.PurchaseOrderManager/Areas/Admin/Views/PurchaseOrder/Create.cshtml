@@ -28,8 +28,8 @@
 				</div>
 			</div>
 
-			<!-- Selected Products Panel -->
-			<div id="selected-products-container" class="form-group">
+			<!-- Selected Products Table -->
+			<div id="selected-products-container" class="form-group" style="display:block;">
 				<div class="card">
 					<div class="card-header">
 						<h5>@T("Admin.PurchaseOrders.SelectedProducts")</h5>
@@ -44,20 +44,23 @@
 										<th>@T("Admin.Catalog.Products.Fields.Quantity")</th>
 										<th>@T("Admin.Catalog.Products.Fields.LinePrice")</th>
 										<th class="text-center">@T("Admin.Common.Edit")</th>
-										<th class="text-center">@T("Admin.Common.Remove")</th>
+										<th class="text-center">@T("Admin.Common.Delete")</th>
 									</tr>
 								</thead>
 								<tbody id="selected-products-body"></tbody>
 							</table>
 						</div>
-						<div id="no-products-selected" class="alert alert-info">
-							@T("Admin.PurchaseOrders.NoProductsSelected")
+
+						<!-- Save Button inside the table container with added margin -->
+						<div class="text-left" style="margin-top: 20px;">
+							<button type="submit" name="save" class="btn btn-primary">
+								<i class="fas fa-save"></i> @T("Admin.Common.Save")
+							</button>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Hidden inputs -->
 			<div id="selected-products-inputs"></div>
 		</div>
 	</div>
@@ -66,19 +69,15 @@
 @section Scripts {
 	<script>
 		let selectedProducts = [];
+		let editingProductId = null;
 
 		$(document).ready(function () {
 			updateSelectedProductsUI();
 
 			$('#SupplierId').change(function () {
 				const supplierId = $(this).val();
-				if (!supplierId) {
-					$('#selected-products-container').hide();
-					selectedProducts = [];
-					updateSelectedProductsUI();
-				} else {
-					$('#add-product-btn').show();
-				}
+				if (!supplierId) selectedProducts = [];
+				updateSelectedProductsUI();
 			});
 
 			$('#add-product-btn').click(function () {
@@ -124,32 +123,35 @@
 			updateSelectedProductsUI();
 		}
 
-		function removeProduct(productId) {
-			selectedProducts = selectedProducts.filter(p => p.id !== productId);
+		function editProduct(productId) {
+			editingProductId = productId;
 			updateSelectedProductsUI();
 		}
 
-		function editProduct(productId) {
-			const row = $('#product-row-' + productId);
-			const product = selectedProducts.find(p => p.id === productId);
-			if (!product) return;
-
-			row.find('.price-cell').html('<input type="number" step="0.01" class="form-control price-input" value="' + product.price + '">');
-			row.find('.qty-cell').html('<input type="number" class="form-control qty-input" value="' + product.quantity + '">');
-			row.find('.edit-btn').html('<button type="button" class="btn btn-success btn-sm" onclick="saveProduct(' + product.id + ')">Save</button>');
-		}
-
-		function saveProduct(productId) {
+		function updateProduct(productId) {
 			const row = $('#product-row-' + productId);
 			const price = parseFloat(row.find('.price-input').val());
 			const quantity = parseInt(row.find('.qty-input').val());
-			const product = selectedProducts.find(p => p.id === productId);
 
-			if (product && !isNaN(price) && !isNaN(quantity)) {
-				product.price = price;
-				product.quantity = quantity;
+			if (!isNaN(price) && !isNaN(quantity)) {
+				const product = selectedProducts.find(p => p.id === productId);
+				if (product) {
+					product.price = price;
+					product.quantity = quantity;
+				}
 			}
 
+			editingProductId = null;
+			updateSelectedProductsUI();
+		}
+
+		function cancelEdit(productId) {
+			editingProductId = null;
+			updateSelectedProductsUI();
+		}
+
+		function removeProduct(productId) {
+			selectedProducts = selectedProducts.filter(p => p.id !== productId);
 			updateSelectedProductsUI();
 		}
 
@@ -160,32 +162,41 @@
 			tbody.empty();
 			inputs.empty();
 
-			if (selectedProducts.length === 0) {
-				$('#no-products-selected').show();
-				return;
-			}
-
-			$('#no-products-selected').hide();
-
 			selectedProducts.forEach(product => {
+				const isEditing = (editingProductId === product.id);
 				const linePrice = (product.price * product.quantity).toFixed(2);
 
-				tbody.append(`
+				const row = $(`
 					<tr id="product-row-${product.id}">
 						<td>${product.name}</td>
-						<td class="price-cell">${product.price.toFixed(2)}</td>
-						<td class="qty-cell">${product.quantity}</td>
+						<td>${isEditing
+							? `<input type="number" class="form-control price-input" value="${product.price}" step="0.01" />`
+							: product.price.toFixed(2)}</td>
+						<td>${isEditing
+							? `<input type="number" class="form-control qty-input" value="${product.quantity}" />`
+							: product.quantity}</td>
 						<td>${linePrice}</td>
-						<td class="edit-btn text-center">
-							<button type="button" class="btn btn-sm btn-primary" onclick="editProduct(${product.id})">Edit</button>
+						<td class="text-center">
+							${isEditing
+								? `<button type="button" class="btn btn-success btn-sm" onclick="updateProduct(${product.id})">
+										<i class="fas fa-save"></i> @T("Admin.Common.Update")
+								   </button>
+								   <button type="button" class="btn btn-secondary btn-sm" onclick="cancelEdit(${product.id})">
+										<i class="fas fa-times"></i> @T("Admin.Common.Cancel")
+								   </button>`
+								: `<button type="button" class="btn btn-default btn-sm" onclick="editProduct(${product.id})">
+										<i class="fas fa-edit"></i> @T("Admin.Common.Edit")
+								   </button>`}
 						</td>
 						<td class="text-center">
-							<button type="button" class="btn btn-sm btn-danger" onclick="removeProduct(${product.id})">
-								<i class="fas fa-times"></i>
+							<button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${product.id})">
+								<i class="fas fa-trash"></i> @T("Admin.Common.Delete")
 							</button>
 						</td>
 					</tr>
 				`);
+
+				tbody.append(row);
 
 				inputs.append(`
 					<input type="hidden" name="SelectedProducts[${product.id}].ProductId" value="${product.id}" />
